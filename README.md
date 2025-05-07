@@ -38,7 +38,15 @@ It consists of two main components:
 
 ## Screenshots
 
-*(Screenshots demonstrating the extension in action and the OBS overlay will be added here soon!)*
+Here's a glimpse of the extension and the OBS overlay:
+
+**Chrome Extension in Action:**
+
+![Chrome Extension UI showing video detection and server connection status](./imgs/extension.png)
+
+**OBS Overlay Display:**
+
+![OBS overlay showing video title, series, progress bar, and time](./imgs/obs.png)
 
 ## Installation & Usage
 
