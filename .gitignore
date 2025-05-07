@@ -2,3 +2,5 @@
 
 # Executables in obs_timer_server root
 obs_timer_server/*.exe 
+# Node modules in any directory
+node_modules/
