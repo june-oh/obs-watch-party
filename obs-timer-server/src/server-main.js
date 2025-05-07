@@ -8,21 +8,7 @@ const os = require('os'); // os 모듈 추가
 
 const PORT = 3000; // 서버가 사용할 포트 번호
 
-// --- 설정 로드 ---
-let config = {
-    platforms: ["Default"],
-    currentPlatformIndex: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.65)",
-    // 폰트 크기 기본값 추가 (config-page.html과 동기화)
-    fontSizeMain: 22, 
-    fontSizeSub: 14,
-    serverIPs: [] // 서버 IP 주소들을 저장할 배열 초기화
-};
-// SEA 환경에서는 __dirname이 process.execPath의 디렉터리가 됩니다.
-// 일반 Node.js 환경에서는 스크립트 파일이 있는 디렉터리입니다.
-const configPath = path.join(isSea() ? path.dirname(process.execPath) : path.join(__dirname, '../'), 'config.json');
-
-// 함수: 로컬 IP 주소 가져오기
+// --- 함수: 로컬 IP 주소 가져오기 (최상위 스코프로 이동) ---
 function getLocalIPs() {
     const interfaces = os.networkInterfaces();
     const ips = [];
@@ -36,44 +22,172 @@ function getLocalIPs() {
     }
     return ips;
 }
+// --- End 함수 ---
+
+// --- 설정 로드 ---
+const DEFAULT_CONFIG = {
+    port: 3000,
+    currentPlatformIndex: 0,
+    platforms: ["Netflix", "YouTube", "Twitch"],
+    backgroundColor: "rgba(0,0,0,0.5)",
+    fontSizeEpisode: 32, // Was fontSizeMain
+    fontSizeSeries: 24,  // Was fontSizeSub
+    fontColorEpisode: "rgba(255,255,255,1)", // Was fontColorMain
+    fontColorSeries: "rgba(200,200,200,1)",  // Was fontColorSub
+    fontColorTime: "rgba(255,255,255,1)",
+    fontColorProgress: "rgba(255,255,255,1)",
+    progressBarFilledColor: "rgba(0,123,255,1)",
+    progressBarBackgroundColor: "rgba(255,255,255,0.3)",
+    progressDotColor: "rgba(255,255,255,1)",
+    pillActiveBackgroundColor: "rgba(0,123,255,0.5)",
+    pillActiveFontColor: "rgba(255,255,255,1)",
+    pillInactiveBackgroundColor: "rgba(108,117,125,0.2)",
+    pillInactiveFontColor: "rgba(200,200,200,1)"
+};
+
+let currentConfig = { ...DEFAULT_CONFIG };
+
+// SEA 환경에서는 __dirname이 process.execPath의 디렉터리가 됩니다.
+// 일반 Node.js 환경에서는 스크립트 파일이 있는 디렉터리입니다.
+const configPath = path.join(isSea() ? path.dirname(process.execPath) : path.join(__dirname, '../'), 'config.json');
+
+// --- Server-side progress logging ---
+let lastLoggedSeries = null;
+let lastLoggedEpisode = null;
+
+function formatTimeForServer(totalSecondsInput) {
+    const totalSeconds = Number(totalSecondsInput);
+    if (isNaN(totalSeconds) || totalSeconds < 0) return '--:--:--';
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = Math.floor(totalSeconds % 60);
+    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+}
+
+function logVideoProgressOnServer(currentData) {
+    // --- 디버깅 로그 제거 ---
+    // console.log("[Debug] logVideoProgressOnServer called with data:", JSON.stringify(currentData));
+    // --- 디버깅 로그 끝 ---
+
+    const currentSeries = currentData.series || null;
+    const currentEpisode = currentData.episode || "";
+    const currentTimeNum = parseFloat(currentData.currentSeconds);
+    const durationNum = parseFloat(currentData.durationSeconds);
+
+    const titlesChanged = currentSeries !== lastLoggedSeries || currentEpisode !== lastLoggedEpisode;
+
+    if (titlesChanged) {
+        if (lastLoggedSeries !== null || lastLoggedEpisode !== null) {
+             process.stdout.write('\n');
+        }
+        let titleDisplay = "No Title";
+        if (currentSeries && currentEpisode) {
+            titleDisplay = `${currentSeries} - ${currentEpisode}`;
+        } else if (currentEpisode) {
+            titleDisplay = currentEpisode;
+        } else if (currentSeries) {
+            titleDisplay = currentSeries;
+        }
+        console.log(`🎬 Now Tracking: ${titleDisplay}`);
+        lastLoggedSeries = currentSeries;
+        lastLoggedEpisode = currentEpisode;
+    }
+
+    if (!isNaN(currentTimeNum) && !isNaN(durationNum) && durationNum > 0) {
+        const barWidth = 20;
+        const progressRatio = Math.min(1, Math.max(0, currentTimeNum / durationNum));
+        const filledWidth = Math.round(barWidth * progressRatio);
+        const emptyWidth = barWidth - filledWidth;
+        
+        const progressBar = '█'.repeat(filledWidth) + '─'.repeat(emptyWidth);
+        const currentTimeFormatted = formatTimeForServer(currentTimeNum);
+        const durationFormatted = formatTimeForServer(durationNum);
+        const percent = Math.round(progressRatio * 100);
+
+        process.stdout.write(`\r  [${progressBar}] ${currentTimeFormatted} / ${durationFormatted} (${percent}%) \x1b[K`);
+    } else if (titlesChanged) {
+        process.stdout.write(`\r  [No valid time data for current title] \x1b[K`);
+    }
+}
+// --- End Server-side progress logging ---
 
 function loadConfiguration() {
-    config.serverIPs = getLocalIPs(); // 설정 로드 전/후에 IP 주소 먼저 가져오기
+    // currentConfig.serverIPs = getLocalIPs(); // Moved to later stage
     try {
         if (fs.existsSync(configPath)) {
-            const rawConfig = fs.readFileSync(configPath, 'utf8');
-            const loadedConfig = JSON.parse(rawConfig);
-            // 로드된 설정과 기본 설정을 병합 (serverIPs는 항상 최신으로 유지)
-            config = { ...config, ...loadedConfig, serverIPs: config.serverIPs }; 
-            console.log("Loaded configuration from config.json:", config);
+            const rawData = fs.readFileSync(configPath);
+            const loadedConfig = JSON.parse(rawData);
+            // Ensure all keys from DEFAULT_CONFIG are present, preferring loaded values
+            currentConfig = { ...DEFAULT_CONFIG, ...loadedConfig }; 
+            // Specifically handle new keys if old ones might exist in a user's config, though this basic merge handles new additions well.
+            // For removed/renamed keys, the spread above means old keys might persist if not overwritten.
+            // However, since we are renaming, we should ideally handle migration or accept that old named keys are ignored.
+            // For this refactor, we assume new keys are used, and old ones (fontSizeMain etc.) from old config files will be ignored by client.
+            console.log("Loaded configuration from config.json:", currentConfig);
         } else {
             console.warn(`config.json not found at ${configPath}. Using default settings and creating file if not in SEA.`);
             if (!isSea()) { 
-                 fs.writeFileSync(configPath, JSON.stringify({ ...config, serverIPs: undefined }, null, 2), 'utf8'); // serverIPs는 파일에 저장 안 함
+                 fs.writeFileSync(configPath, JSON.stringify({ ...DEFAULT_CONFIG, serverIPs: undefined }, null, 2), 'utf8'); // serverIPs는 파일에 저장 안 함
                  console.log("Created default config.json (serverIPs excluded)");
             }
         }
-    } catch (err) {
-        console.error("Error loading or parsing config.json. Using default settings.", err);
+    } catch (error) {
+        console.warn("Config file not found or unreadable, using default config.");
+        currentConfig = { ...DEFAULT_CONFIG };
+        saveConfig(); // Save the default config if one doesn't exist
     }
+    // Ensure serverIPs is set *after* currentConfig is established
+    currentConfig.serverIPs = getLocalIPs();
+
     // 유효성 검사 (로드 후 최종 config 객체에 대해 수행)
-    if (!config.platforms || !Array.isArray(config.platforms) || config.platforms.length === 0) {
+    if (!currentConfig.platforms || !Array.isArray(currentConfig.platforms) || currentConfig.platforms.length === 0) {
         console.warn("Config 'platforms' is missing, not an array, or empty. Using default: [\"Default\"]");
-        config.platforms = ["Default"];
-        config.currentPlatformIndex = 0;
+        currentConfig.platforms = ["Default"];
+        currentConfig.currentPlatformIndex = 0;
     }
-    if (typeof config.currentPlatformIndex !== 'number' || config.currentPlatformIndex < 0 || config.currentPlatformIndex >= config.platforms.length) {
-        console.warn(`Invalid currentPlatformIndex (${config.currentPlatformIndex}). Resetting to 0.`);
-        config.currentPlatformIndex = 0;
+    if (typeof currentConfig.currentPlatformIndex !== 'number' || currentConfig.currentPlatformIndex < 0 || currentConfig.currentPlatformIndex >= currentConfig.platforms.length) {
+        console.warn(`Invalid currentPlatformIndex (${currentConfig.currentPlatformIndex}). Resetting to 0.`);
+        currentConfig.currentPlatformIndex = 0;
     }
-    if (typeof config.backgroundColor !== 'string') {
-        config.backgroundColor = "rgba(0, 0, 0, 0.65)";
+    if (typeof currentConfig.backgroundColor !== 'string') {
+        currentConfig.backgroundColor = "rgba(0, 0, 0, 0.65)";
     }
-    if (typeof config.fontSizeMain !== 'number') {
-        config.fontSizeMain = 22;
+    if (typeof currentConfig.fontSizeEpisode !== 'number') {
+        currentConfig.fontSizeEpisode = 32;
     }
-    if (typeof config.fontSizeSub !== 'number') {
-        config.fontSizeSub = 14;
+    if (typeof currentConfig.fontSizeSeries !== 'number') {
+        currentConfig.fontSizeSeries = 24;
+    }
+    // 추가된 색상 설정 유효성 검사 (간단한 타입 체크)
+    currentConfig.fontColorEpisode = typeof currentConfig.fontColorEpisode === 'string' ? currentConfig.fontColorEpisode : "rgba(255,255,255,1)";
+    currentConfig.fontColorSeries = typeof currentConfig.fontColorSeries === 'string' ? currentConfig.fontColorSeries : "rgba(200,200,200,1)";
+    currentConfig.fontColorTime = typeof currentConfig.fontColorTime === 'string' ? currentConfig.fontColorTime : "rgba(255,255,255,1)";
+    currentConfig.fontColorProgress = typeof currentConfig.fontColorProgress === 'string' ? currentConfig.fontColorProgress : "rgba(255,255,255,1)";
+    currentConfig.progressBarFilledColor = typeof currentConfig.progressBarFilledColor === 'string' ? currentConfig.progressBarFilledColor : "rgba(0,123,255,1)";
+    currentConfig.progressBarBackgroundColor = typeof currentConfig.progressBarBackgroundColor === 'string' ? currentConfig.progressBarBackgroundColor : "rgba(255,255,255,0.3)";
+    currentConfig.progressDotColor = typeof currentConfig.progressDotColor === 'string' ? currentConfig.progressDotColor : "rgba(255,255,255,1)";
+    currentConfig.pillActiveBackgroundColor = typeof currentConfig.pillActiveBackgroundColor === 'string' ? currentConfig.pillActiveBackgroundColor : "rgba(0,123,255,0.5)";
+    currentConfig.pillActiveFontColor = typeof currentConfig.pillActiveFontColor === 'string' ? currentConfig.pillActiveFontColor : "rgba(255,255,255,1)";
+    currentConfig.pillInactiveBackgroundColor = typeof currentConfig.pillInactiveBackgroundColor === 'string' ? currentConfig.pillInactiveBackgroundColor : "rgba(108,117,125,0.2)";
+    currentConfig.pillInactiveFontColor = typeof currentConfig.pillInactiveFontColor === 'string' ? currentConfig.pillInactiveFontColor : "rgba(200,200,200,1)";
+}
+
+function saveConfig() {
+    try {
+        // Ensure all keys that are in DEFAULT_CONFIG are saved.
+        // This is important if new config options were added to DEFAULT_CONFIG
+        // and aren't yet in currentConfig (e.g. if currentConfig was loaded from an older version)
+        const configToSave = { ...DEFAULT_CONFIG };
+        for (const key in currentConfig) {
+            if (Object.prototype.hasOwnProperty.call(DEFAULT_CONFIG, key)) {
+                 // Only save keys that are defined in DEFAULT_CONFIG to avoid saving obsolete keys
+                configToSave[key] = currentConfig[key];
+            }
+        }
+        fs.writeFileSync(configPath, JSON.stringify(configToSave, null, 2));
+        console.log("Config saved.");
+    } catch (error) {
+        console.error("Error saving config.json:", error);
     }
 }
 
@@ -85,10 +199,18 @@ const server = http.createServer((req, res) => {
         serveAsset('obs-display.html', 'text/html; charset=utf-8', res, path.join(__dirname, '../public/obs-display.html'));
     } else if (req.url === '/config') {
         serveAsset('config-page.html', 'text/html; charset=utf-8', res, path.join(__dirname, '../public/config-page.html'));
+    } else if (req.url === '/css/obs-display.css') {
+        serveAsset('css/obs-display.css', 'text/css; charset=utf-8', res, path.join(__dirname, '../public/css/obs-display.css'));
+    } else if (req.url === '/js/obs-display.js') {
+        serveAsset('js/obs-display.js', 'application/javascript; charset=utf-8', res, path.join(__dirname, '../public/js/obs-display.js'));
+    } else if (req.url === '/css/config-page.css') {
+        serveAsset('css/config-page.css', 'text/css; charset=utf-8', res, path.join(__dirname, '../public/css/config-page.css'));
+    } else if (req.url === '/js/config-page.js') {
+        serveAsset('js/config-page.js', 'application/javascript; charset=utf-8', res, path.join(__dirname, '../public/js/config-page.js'));
     } else if (req.url === '/api/config' && req.method === 'GET') {
         res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
         // API 응답 시 최신 IP 정보 (config 객체에 이미 포함되어 있음) 전송
-        res.end(JSON.stringify(config)); 
+        res.end(JSON.stringify(currentConfig)); 
     } else if (req.url === '/api/config' && req.method === 'POST') {
         let body = '';
         req.on('data', chunk => {
@@ -98,28 +220,31 @@ const server = http.createServer((req, res) => {
             try {
                 const newConfig = JSON.parse(body);
                 const { serverIPs, ...restOfNewConfig } = newConfig; // serverIPs는 클라이언트에서 보내도 무시
-                config = { ...config, ...restOfNewConfig, serverIPs: getLocalIPs() }; // IP는 항상 서버에서 최신으로
+                currentConfig = { ...currentConfig, ...restOfNewConfig, serverIPs: getLocalIPs() }; // IP는 항상 서버에서 최신으로
                 
                 // 유효성 검사 강화
-                if (!config.platforms || !Array.isArray(config.platforms) || config.platforms.length === 0) config.platforms = ["Default"];
-                config.currentPlatformIndex = Math.max(0, Math.min(Number(config.currentPlatformIndex) || 0, config.platforms.length - 1));
-                config.backgroundColor = typeof config.backgroundColor === 'string' ? config.backgroundColor : "rgba(0,0,0,0.65)";
-                config.fontSizeMain = typeof config.fontSizeMain === 'number' ? config.fontSizeMain : 22;
-                config.fontSizeSub = typeof config.fontSizeSub === 'number' ? config.fontSizeSub : 14;
+                if (!currentConfig.platforms || !Array.isArray(currentConfig.platforms) || currentConfig.platforms.length === 0) currentConfig.platforms = ["Default"];
+                currentConfig.currentPlatformIndex = Math.max(0, Math.min(Number(currentConfig.currentPlatformIndex) || 0, currentConfig.platforms.length - 1));
+                currentConfig.backgroundColor = typeof currentConfig.backgroundColor === 'string' ? currentConfig.backgroundColor : "rgba(0,0,0,0.65)";
+                currentConfig.fontSizeEpisode = typeof currentConfig.fontSizeEpisode === 'number' ? currentConfig.fontSizeEpisode : 32;
+                currentConfig.fontSizeSeries = typeof currentConfig.fontSizeSeries === 'number' ? currentConfig.fontSizeSeries : 24;
+
+                // POST 요청 시 신규 색상 설정 업데이트 및 유효성 검사
+                currentConfig.fontColorEpisode = typeof restOfNewConfig.fontColorEpisode === 'string' ? restOfNewConfig.fontColorEpisode : currentConfig.fontColorEpisode;
+                currentConfig.fontColorSeries = typeof restOfNewConfig.fontColorSeries === 'string' ? restOfNewConfig.fontColorSeries : currentConfig.fontColorSeries;
+                currentConfig.fontColorTime = typeof restOfNewConfig.fontColorTime === 'string' ? restOfNewConfig.fontColorTime : currentConfig.fontColorTime;
+                currentConfig.fontColorProgress = typeof restOfNewConfig.fontColorProgress === 'string' ? restOfNewConfig.fontColorProgress : currentConfig.fontColorProgress;
+                currentConfig.progressBarFilledColor = typeof restOfNewConfig.progressBarFilledColor === 'string' ? restOfNewConfig.progressBarFilledColor : currentConfig.progressBarFilledColor;
+                currentConfig.progressBarBackgroundColor = typeof restOfNewConfig.progressBarBackgroundColor === 'string' ? restOfNewConfig.progressBarBackgroundColor : currentConfig.progressBarBackgroundColor;
+                currentConfig.progressDotColor = typeof restOfNewConfig.progressDotColor === 'string' ? restOfNewConfig.progressDotColor : currentConfig.progressDotColor;
+                currentConfig.pillActiveBackgroundColor = typeof restOfNewConfig.pillActiveBackgroundColor === 'string' ? restOfNewConfig.pillActiveBackgroundColor : currentConfig.pillActiveBackgroundColor;
+                currentConfig.pillActiveFontColor = typeof restOfNewConfig.pillActiveFontColor === 'string' ? restOfNewConfig.pillActiveFontColor : currentConfig.pillActiveFontColor;
+                currentConfig.pillInactiveBackgroundColor = typeof restOfNewConfig.pillInactiveBackgroundColor === 'string' ? restOfNewConfig.pillInactiveBackgroundColor : currentConfig.pillInactiveBackgroundColor;
+                currentConfig.pillInactiveFontColor = typeof restOfNewConfig.pillInactiveFontColor === 'string' ? restOfNewConfig.pillInactiveFontColor : currentConfig.pillInactiveFontColor;
 
                 // serverIPs 필드를 제외하고 파일에 저장
-                const { serverIPs: ipsToExclude, ...configToSave } = config;
-                fs.writeFile(configPath, JSON.stringify(configToSave, null, 2), 'utf8', (err) => {
-                    if (err) {
-                        console.error("Error writing config.json:", err);
-                        res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8' });
-                        res.end(JSON.stringify({ message: 'Error saving configuration' }));
-                        return;
-                    }
-                    res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
-                    res.end(JSON.stringify({ message: 'Configuration saved successfully', config: config }));
-                    broadcast(JSON.stringify({ type: 'CONFIG_UPDATED', config: config }));
-                });
+                const { serverIPs: ipsToExclude, ...configToSave } = currentConfig;
+                saveConfig();
             } catch (e) {
                 console.error("Error parsing or processing new config:", e);
                 res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
@@ -136,9 +261,9 @@ const server = http.createServer((req, res) => {
 const wss = new WebSocket.Server({ server }); // 기졸 HTTP 서버에 연결
 
 console.log(`OBS Bridge Server listening on http://localhost:${PORT}`);
-if (config.serverIPs.length > 0) {
+if (currentConfig.serverIPs.length > 0) {
     console.log(`Other available IP addresses for remote access (PC 2 OBS Source):`);
-    config.serverIPs.forEach(ip => {
+    currentConfig.serverIPs.forEach(ip => {
         // 127.0.0.1은 localhost와 동일하므로 보통 외부 접속에는 사용 안 함
         // 필요시 if (ip !== '127.0.0.1') 조건을 추가할 수 있음
         console.log(`  http://${ip}:${PORT} (for config page)`);
@@ -152,7 +277,7 @@ console.log('서버를 종료하려면 이 창에서 Ctrl+C를 누르거나 창�
 // 연결된 클라이언트(OBS 브라우저 소스) 목록 관리
 const clients = new Set();
 const connectedIPs = new Set(); // 연결된 클라이언트의 IP 주소들을 추적 (로깅용)
-let lastKnownVideoData = { main: '대기중...', sub: '대기중...', current: '--:--', duration: '--:--' }; // 마지막 데이터 저장
+let lastKnownVideoData = { series: null, episode: '대기중...', currentSeconds: 0, durationSeconds: 0, source: null }; // 키 변경 및 초기값 조정
 
 wss.on('connection', (ws, req) => { // req 추가하여 클라이언트 IP 로깅 가능
     const clientIp = req.socket.remoteAddress;
@@ -169,8 +294,8 @@ wss.on('connection', (ws, req) => { // req 추가하여 클라이언트 IP 로�
     // 연결 시 마지막 데이터 + 설정 즉시 전송
     ws.send(JSON.stringify({ 
         type: 'VIDEO_UPDATE', 
-        data: lastKnownVideoData, 
-        config: config
+        data: lastKnownVideoData, // series, episode 포함 데이터
+        config: currentConfig
     }));
 
     // 클라이언트로부터 메시지 수신 (주로 확장 프로그램에서 보낼 것)
@@ -179,13 +304,14 @@ wss.on('connection', (ws, req) => { // req 추가하여 클라이언트 IP 로�
             const parsedMessage = JSON.parse(message);
             // 확장 프로그램에서 보낸 데이터인지 확인 (간단한 방식)
             if (parsedMessage.type === 'FROM_EXTENSION' && parsedMessage.data) {
-                 console.log('Received data from extension:', parsedMessage.data);
-                 lastKnownVideoData = parsedMessage.data; // 마지막 데이터 업데이트
+                 // logVideoProgressOnServer는 이제 data.series, data.episode를 기대함
+                 logVideoProgressOnServer(parsedMessage.data); 
+                 lastKnownVideoData = parsedMessage.data; // 마지막 데이터 업데이트 (series, episode 포함)
                  // 연결된 모든 OBS 클라이언트에게 데이터 + 설정 브로드캐스트
                  broadcast(JSON.stringify({ 
                      type: 'VIDEO_UPDATE', 
-                     data: lastKnownVideoData, 
-                     config: config
+                     data: lastKnownVideoData, // series, episode 포함 데이터
+                     config: currentConfig
                  }));
             } else {
                 // console.log('Received other message:', parsedMessage);
@@ -198,7 +324,7 @@ wss.on('connection', (ws, req) => { // req 추가하여 클라이언트 IP 로�
     // 클라이언트 연결 종료 시
     ws.on('close', () => {
         const closedClientIp = ws.clientIpAddress; // 연결 객체에 저장된 IP 사용
-        console.log(`OBS Client disconnected from ${closedClientIp}`);
+        console.log(`\nOBS Client disconnected from ${closedClientIp}`); // Ensure newline after progress bar
         clients.delete(ws);
 
         // 해당 IP를 사용하는 다른 활성 연결이 있는지 확인
@@ -218,7 +344,7 @@ wss.on('connection', (ws, req) => { // req 추가하여 클라이언트 IP 로�
     // 에러 처리
     ws.on('error', (error) => {
         const errorClientIp = ws.clientIpAddress || 'unknown IP';
-        console.error(`WebSocket error from ${errorClientIp}:`, error);
+        console.error(`\nWebSocket error from ${errorClientIp}:`, error); // Ensure newline after progress bar
         // clients.delete(ws)는 on('close')에서 처리됨 (에러 발생 시 보통 close도 발생)
     });
 });

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Watch Party Info</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      width: 280px; /* 팝업 너비 조정 */
+      padding: 10px;
+      font-size: 13px;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    .info-item {
+      margin-bottom: 6px;
+    }
+    .info-item strong {
+      display: inline-block;
+      min-width: 70px; /* Adjusted for English labels */
+      color: #555;
+    }
+    #videoInfo div {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding: 2px 0;
+    }
+    button {
+      width: 100%;
+      padding: 8px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 4px;
+      background-color: #4CAF50;
+      color: white;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    button.inactive {
+        background-color: #f44336;
+    }
+    button.inactive:hover {
+        background-color: #da190b;
+    }
+    .status {
+        font-size: 11px;
+        color: #777;
+        text-align: center;
+        margin-bottom: 8px;
+    }
+    #serverStatus {
+        font-size: 11px;
+        font-weight: bold;
+        text-align: center;
+        margin-bottom: 5px;
+        padding: 3px;
+        border-radius: 3px;
+    }
+    #serverStatus.connected {
+        color: #2e7d32;
+        background-color: #e8f5e9; 
+    }
+    #serverStatus.disconnected {
+        color: #c62828;
+        background-color: #ffebee;
+    }
+  </style>
+</head>
+<body>
+  <div id="serverStatus">Server: Connecting...</div>
+  <div class="status" id="trackingStatus">Tracking Inactive</div>
+  <div id="videoInfo">
+    <div class="info-item"><strong>Title:</strong> <span id="mainTitle">-</span></div>
+    <div class="info-item"><strong>Series:</strong> <span id="subTitle">-</span></div>
+    <div class="info-item"><strong>Time:</strong> <span id="timeInfo">-</span></div>
+    <div class="info-item"><strong>Progress:</strong> <span id="progressInfo">-</span></div>
+  </div>
+  <button id="toggleButton">Start Tracking</button>
+  <script src="popup.js"></script>
+</body>
+</html> 

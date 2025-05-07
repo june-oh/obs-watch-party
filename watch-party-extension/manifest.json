@@ -22,10 +22,12 @@
     }
   ],
   "action": {
-    "default_title": "비디오 정보 보내기 시작/중지",
+    "default_popup": "popup.html",
+    "default_title": "Watch Party 정보 보기",
     "default_icon": {
       "16": "icons/icon-inactive-16.png",
-      "48": "icons/icon-inactive-48.png"
+      "48": "icons/icon-inactive-48.png",
+      "128": "icons/icon-inactive-128.png"
     }
   },
   "icons": {

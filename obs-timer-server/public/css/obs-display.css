@@ -1,0 +1,145 @@
+/* obs-timer-server/public/css/obs-display.css */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap'); /* Noto Sans KR 웹 폰트 임포트 */
+
+/* ─── OBS 기본 body 스타일 ─── */
+body {
+  margin: 0px auto; /* OBS 권장 스타일 */
+  background-color: rgba(0, 0, 0, 0); /* OBS에서는 body 배경 투명 */
+  font-family: 'Noto Sans KR', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* 웹 폰트 우선 적용 */
+  color: #ffffff;
+  overflow: hidden; /* 스크롤바 방지 */
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+.overlay {
+  /* background-color는 JavaScript에서 설정 */
+  padding: 10px 15px;
+  border-radius: 8px;
+  width: 100%; /* 너비 100% */
+  box-sizing: border-box; /* 패딩과 보더를 너비에 포함 */
+  position: absolute; /* 화면 상단/하단에 고정하기 위해 */
+  top: 10px; /* 상단에서 10px 띄움 (기존 bottom: 10px 에서 변경) */
+  left: 0; /* 왼쪽 정렬 */
+  display: block;
+  opacity: 1; /* 초기 불투명도 */
+  transition: opacity 0.5s ease-in-out; /* 부드러운 전환 효과 */
+}
+.overlay.hidden {
+    opacity: 0;
+}
+
+.titles {
+  text-align: left; /* 제목은 왼쪽 정렬 */
+  margin-bottom: 5px; /* 제목과 진행바 사이 간격 조정 */
+}
+
+.title-main,
+.title-sub {
+  display: block; /* 블록 요소로 만들어 줄바꿈 효과 */
+  line-height: 1.2; /* 줄 간격 */
+  overflow: hidden; /* 내용이 넘칠 경우 숨김 (개별 적용) */
+  white-space: nowrap; /* 줄바꿈 방지 (개별 적용) */
+  text-overflow: ellipsis; /* 넘치는 텍스트는 ... 처리 (개별 적용) */
+}
+
+.title-main {
+  /* font-size는 JavaScript에서 설정 */
+  font-weight: 700; /* 굵은 글씨 */
+}
+
+.title-sub {
+  /* font-size는 JavaScript에서 설정 */
+  font-weight: 400; /* 보통 굵기 */
+}
+
+.progress-bar-container {
+  height: 6px; /* 프로그레스 바 높이 */
+  background-color: rgba(255, 255, 255, 0.3); /* 바 배경색 */
+  border-radius: 3px; /* 둥근 모서리 */
+  margin: 0 0 5px 0; /* 진행바와 시간 표시줄 사이 간격 조정 (좌우 마진 제거) */
+  position: relative;
+  width: 100%; /* 너비 100% */
+  box-sizing: border-box;
+}
+
+.progress-bar {
+  height: 100%;
+  background-color: #ffffff; /* 채워진 부분 색상 */
+  border-radius: 3px;
+  width: 0%; /* JavaScript로 조절 */
+  transition: width 0.1s linear;
+}
+.progress-dot {
+    width: 10px; /* 점 크기 */
+    height: 10px;
+    background-color: white;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%); /* 점의 중앙을 기준으로 위치 조정 */
+    left: 0%; /* JavaScript로 조절 */
+    transition: left 0.1s linear;
+}
+
+.time-display-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* 시간정보(왼쪽)와 진행률%(오른쪽) 양쪽 정렬 */
+  width: 100%; /* 너비 100% */
+  margin-bottom: 8px; /* 시간 표시줄과 플랫폼 알약 사이 간격 */
+}
+
+.time-info {
+    display: flex;
+    align-items: center;
+    /* flex-grow: 1; 삭제 또는 수정: space-between으로 처리 */
+}
+.time-separator {
+    margin: 0 5px;
+}
+
+.current-time,
+.total-time {
+  font-size: 12pt;
+  font-weight: 400;
+}
+
+.progress-percentage {
+    font-size: 11pt; /* 진행률 폰트 크기 조정 */
+    font-weight: 400;
+    margin-left: 10px; /* 시간 정보와의 간격 */
+    min-width: 40px; /* 최소 너비 확보 (예: 100%) */
+    text-align: right;
+}
+
+.platform-pills {
+    display: flex;
+    gap: 5px; /* 알약 사이 간격 */
+    justify-content: flex-start; /* 플랫폼 알약 왼쪽 정렬 (필요시 center 또는 flex-end) */
+    width: 100%; /* 너비 100% */
+}
+.platform-pill {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 3px 8px;
+    border-radius: 10px;
+    font-size: 9pt;
+    cursor: default; /* 클릭 불가 */
+    white-space: nowrap;
+}
+.platform-pill.active {
+    background-color: rgba(255, 255, 255, 0.5);
+    font-weight: bold;
+}
+#connection-status {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    background-color: rgba(200, 0, 0, 0.8);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 10pt;
+    display: none; /* 초기에는 숨김 */
+} 

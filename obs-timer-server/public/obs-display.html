@@ -3,286 +3,32 @@
 <head>
   <meta charset="UTF-8">
   <title>Video Overlay</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap'); /* Noto Sans KR 웹 폰트 임포트 */
-
-    /* ─── OBS 기본 body 스타일 ─── */
-    body {
-      margin: 0px auto; /* OBS 권장 스타일 */
-      background-color: rgba(0, 0, 0, 0); /* OBS에서는 body 배경 투명 */
-      font-family: 'Noto Sans KR', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* 웹 폰트 우선 적용 */
-      color: #ffffff;
-      overflow: hidden; /* 스크롤바 방지 */
-      width: 100%;
-      height: 100%;
-      box-sizing: border-box;
-    }
-    .overlay {
-      /* background-color는 JavaScript에서 설정 */
-      padding: 10px 15px;
-      border-radius: 8px;
-      width: 100%; /* 너비 100% */
-      box-sizing: border-box; /* 패딩과 보더를 너비에 포함 */
-      position: absolute; /* 화면 하단에 고정하기 위해 */
-      bottom: 10px; /* 하단에서 10px 띄움 (조정 가능) */
-      left: 0; /* 왼쪽 정렬 */
-      display: block;
-      opacity: 1; /* 초기 불투명도 */
-      transition: opacity 0.5s ease-in-out; /* 부드러운 전환 효과 */
-    }
-    .overlay.hidden {
-        opacity: 0;
-    }
-
-    .titles {
-      text-align: left; /* 제목은 왼쪽 정렬 */
-      margin-bottom: 8px; /* 제목과 시간 사이 간격 */
-      overflow: hidden; /* 내용이 넘칠 경우 숨김 */
-      white-space: nowrap; /* 줄바꿈 방지 */
-      text-overflow: ellipsis; /* 넘치는 텍스트는 ... 처리 */
-    }
-
-    .title-main {
-      /* font-size는 JavaScript에서 설정 */
-      font-weight: 700; /* 굵은 글씨 */
-      display: block; /* 블록 요소로 만들어 줄바꿈 효과 */
-      line-height: 1.2; /* 줄 간격 */
-    }
-
-    .title-sub {
-      /* font-size는 JavaScript에서 설정 */
-      font-weight: 400; /* 보통 굵기 */
-      display: block;
-      line-height: 1.2;
-    }
-
-    .time-display-container {
-      display: flex;
-      align-items: center;
-      justify-content: space-between; /* 시간과 플랫폼 버튼 양쪽 정렬 */
-    }
-
-    .time-info {
-        display: flex;
-        align-items: center;
-    }
-
-    .current-time,
-    .total-time {
-      font-size: 12pt;
-      font-weight: 400;
-    }
-
-    .progress-bar-container {
-      flex-grow: 1; /* 남은 공간을 모두 차지 */
-      height: 6px; /* 프로그레스 바 높이 */
-      background-color: rgba(255, 255, 255, 0.3); /* 바 배경색 */
-      border-radius: 3px; /* 둥근 모서리 */
-      margin: 0 10px; /* 시간 텍스트와의 간격 */
-      position: relative;
-    }
-
-    .progress-bar {
-      height: 100%;
-      background-color: #ffffff; /* 채워진 부분 색상 */
-      border-radius: 3px;
-      width: 0%; /* JavaScript로 조절 */
-      transition: width 0.1s linear;
-    }
-    .progress-dot {
-        width: 10px; /* 점 크기 */
-        height: 10px;
-        background-color: white;
-        border-radius: 50%;
-        position: absolute;
-        top: 50%;
-        transform: translate(-50%, -50%); /* 점의 중앙을 기준으로 위치 조정 */
-        left: 0%; /* JavaScript로 조절 */
-        transition: left 0.1s linear;
-    }
-    .platform-pills {
-        display: flex;
-        gap: 5px; /* 알약 사이 간격 */
-    }
-    .platform-pill {
-        background-color: rgba(255, 255, 255, 0.2);
-        color: white;
-        padding: 3px 8px;
-        border-radius: 10px;
-        font-size: 9pt;
-        cursor: default; /* 클릭 불가 */
-        white-space: nowrap;
-    }
-    .platform-pill.active {
-        background-color: rgba(255, 255, 255, 0.5);
-        font-weight: bold;
-    }
-    #connection-status {
-        position: fixed;
-        top: 10px;
-        left: 10px;
-        background-color: rgba(200, 0, 0, 0.8);
-        color: white;
-        padding: 5px 10px;
-        border-radius: 5px;
-        font-size: 10pt;
-        display: none; /* 초기에는 숨김 */
-    }
-  </style>
+  <link rel="stylesheet" href="css/obs-display.css">
 </head>
 <body>
   <div id="connection-status">연결 안됨</div>
   <div class="overlay" id="video-overlay">
-    <div class="titles">
-      <span id="title-main" class="title-main"></span>
+    <div class="titles">      
       <span id="title-sub" class="title-sub"></span>
+      <span id="title-main" class="title-main"></span>
+    </div>
+    <div class="progress-bar-container">
+        <div class="progress-bar" id="progress-bar"></div>
+        <div class="progress-dot" id="progress-dot"></div>
     </div>
     <div class="time-display-container">
         <div class="time-info">
             <span class="current-time" id="current-time">--:--</span>
-            <div class="progress-bar-container">
-                <div class="progress-bar" id="progress-bar"></div>
-                <div class="progress-dot" id="progress-dot"></div>
-            </div>
+            <span class="time-separator">/</span>
             <span class="total-time" id="total-time">--:--</span>
         </div>
-        <div class="platform-pills" id="platform-pills-container">
-            <!-- 플랫폼 알약이 여기에 동적으로 추가됩니다. -->
-        </div>
+        <span class="progress-percentage" id="progress-percentage">0%</span>
+    </div>
+    <div class="platform-pills" id="platform-pills-container">
+        <!-- 플랫폼 알약이 여기에 동적으로 추가됩니다. -->
     </div>
   </div>
 
-  <script>
-    let ws;
-    let currentConfig = {}; // 현재 설정을 저장할 변수
-    const overlayElement = document.getElementById('video-overlay');
-    const titleMainElement = document.getElementById('title-main');
-    const titleSubElement = document.getElementById('title-sub');
-    const currentTimeElement = document.getElementById('current-time');
-    const totalTimeElement = document.getElementById('total-time');
-    const progressBarElement = document.getElementById('progress-bar');
-    const progressDotElement = document.getElementById('progress-dot');
-    const platformPillsContainer = document.getElementById('platform-pills-container');
-    const connectionStatusElement = document.getElementById('connection-status');
-
-    function connect() {
-      // 현재 페이지의 호스트 주소를 사용하여 WebSocket 서버에 연결
-      const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      const wsHost = window.location.hostname || 'localhost';
-      const wsPort = window.location.port || (wsProtocol === 'wss:' ? 443 : 3000); // 서버 포트와 일치시킴
-      
-      ws = new WebSocket(`${wsProtocol}//${wsHost}:${wsPort}`);
-
-      ws.onopen = () => {
-        console.log('Connected to OBS Bridge Server');
-        connectionStatusElement.style.display = 'none';
-        overlayElement.classList.remove('hidden');
-      };
-
-      ws.onmessage = (event) => {
-        const message = JSON.parse(event.data);
-        if (message.type === 'VIDEO_UPDATE' || message.type === 'CONFIG_UPDATED') {
-            if (message.config) {
-                currentConfig = message.config;
-                applyConfig(currentConfig);
-            }
-            if (message.data) {
-                updateDisplay(message.data);
-            }
-        }
-      };
-
-      ws.onclose = () => {
-        console.log('Disconnected from OBS Bridge Server');
-        connectionStatusElement.style.display = 'block';
-        overlayElement.classList.add('hidden');
-        // titleMainElement.textContent = '연결 안됨';
-        // titleSubElement.textContent = '';
-        // currentTimeElement.textContent = '--:--';
-        // totalTimeElement.textContent = '--:--';
-        // progressBarElement.style.width = '0%';
-        // progressDotElement.style.left = '0%';
-        // platformPillsContainer.innerHTML = '';
-        setTimeout(connect, 5000); // 5초 후 재연결 시도
-      };
-
-      ws.onerror = (error) => {
-        console.error('WebSocket Error:', error);
-        // ws.onclose가 호출되므로 별도 처리는 불필요
-      };
-    }
-
-    function applyConfig(config) {
-        if (overlayElement && config.backgroundColor) {
-            overlayElement.style.backgroundColor = config.backgroundColor;
-        }
-        if (titleMainElement && config.fontSizeMain) {
-            titleMainElement.style.fontSize = `${config.fontSizeMain}pt`;
-        }
-        if (titleSubElement && config.fontSizeSub) {
-            titleSubElement.style.fontSize = `${config.fontSizeSub}pt`;
-        }
-
-        platformPillsContainer.innerHTML = ''; // 기존 알약 삭제
-        if (config.platforms && config.platforms.length > 0) {
-            config.platforms.forEach((platformName, index) => {
-                const pill = document.createElement('span');
-                pill.classList.add('platform-pill');
-                if (index === config.currentPlatformIndex) {
-                    pill.classList.add('active');
-                }
-                pill.textContent = platformName;
-                platformPillsContainer.appendChild(pill);
-            });
-        }
-    }
-
-    function updateDisplay(data) {
-      titleMainElement.textContent = data.main || '';
-      titleSubElement.textContent = data.sub || '';
-
-      const currentSeconds = parseTimeToSeconds(data.current);
-      const totalSeconds = parseTimeToSeconds(data.duration);
-
-      currentTimeElement.textContent = formatTime(currentSeconds, totalSeconds >= 3600);
-      totalTimeElement.textContent = formatTime(totalSeconds, totalSeconds >= 3600);
-
-      if (totalSeconds > 0) {
-        const progressPercentage = (currentSeconds / totalSeconds) * 100;
-        progressBarElement.style.width = `${progressPercentage}%`;
-        progressDotElement.style.left = `${progressPercentage}%`;
-      } else {
-        progressBarElement.style.width = '0%';
-        progressDotElement.style.left = '0%';
-      }
-    }
-
-    function parseTimeToSeconds(timeStr) {
-      if (!timeStr || typeof timeStr !== 'string') return 0;
-      const parts = timeStr.split(':').map(Number);
-      if (parts.length === 3) { // HH:MM:SS
-        return parts[0] * 3600 + parts[1] * 60 + parts[2];
-      }
-      if (parts.length === 2) { // MM:SS
-        return parts[0] * 60 + parts[1];
-      }
-      return 0;
-    }
-
-    function formatTime(totalSeconds, showHours) {
-      if (isNaN(totalSeconds) || totalSeconds < 0) return showHours ? "00:00:00" : "00:00";
-      const hours = Math.floor(totalSeconds / 3600);
-      const minutes = Math.floor((totalSeconds % 3600) / 60);
-      const seconds = totalSeconds % 60;
-
-      const paddedHours = String(hours).padStart(2, '0');
-      const paddedMinutes = String(minutes).padStart(2, '0');
-      const paddedSeconds = String(seconds).padStart(2, '0');
-
-      return showHours || hours > 0 ? `${paddedHours}:${paddedMinutes}:${paddedSeconds}` : `${paddedMinutes}:${paddedSeconds}`;
-    }
-
-    connect(); // 페이지 로드 시 연결 시작
-  </script>
+  <script src="js/obs-display.js" defer></script>
 </body>
 </html> 

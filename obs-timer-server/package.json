@@ -6,7 +6,7 @@
   "bin": "src/server-main.js",
   "scripts": {
     "start": "node src/server-main.js",
-    "build": "if not exist dist mkdir dist && esbuild src/server-main.js --bundle --outfile=dist/server.bundle.js --platform=node --format=cjs && node --experimental-sea-config sea-config.json && node -e \"require('fs').copyFileSync(process.execPath, 'dist/obs-timer-server.exe')\" && npx postject dist/obs-timer-server.exe NODE_SEA_BLOB dist/obs-timer-server.blob --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2 --overwrite && del dist\\obs-timer-server.blob && del dist\\server.bundle.js",
+    "build": "node scripts/build.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "pkg": {

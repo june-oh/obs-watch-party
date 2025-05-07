@@ -4,6 +4,10 @@
   "disableExperimentalSEAWarning": true,
   "assets": {
     "obs-display.html": "./public/obs-display.html",
-    "config-page.html": "./public/config-page.html"
+    "config-page.html": "./public/config-page.html",
+    "css/obs-display.css": "./public/css/obs-display.css",
+    "js/obs-display.js": "./public/js/obs-display.js",
+    "css/config-page.css": "./public/css/config-page.css",
+    "js/config-page.js": "./public/js/config-page.js"
   }
 } 

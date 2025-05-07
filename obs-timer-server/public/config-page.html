@@ -4,373 +4,99 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OBS 타이머 설정</title>
-    <style>
-        body {
-            font-family: sans-serif;
-            margin: 20px;
-            background-color: #f4f4f4;
-            color: #333;
-        }
-        .container {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            max-width: 600px; /* 최대 너비 설정 */
-            margin-left: auto; /* 중앙 정렬 */
-            margin-right: auto; /* 중앙 정렬 */
-        }
-        h1 {
-            color: #333;
-            text-align: center;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        input[type="text"],
-        input[type="color"],
-        input[type="number"],
-        select {
-            width: 100%; /* 너비 100%로 변경 */
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        /* 새 플랫폼 추가 부분의 input과 button을 한 줄에 배치 */
-        .add-platform-group {
-            display: flex;
-            align-items: center;
-        }
-        .add-platform-group input[type="text"] {
-            flex-grow: 1;
-            margin-right: 10px;
-        }
-
-        button {
-            background-color: #007bff;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        #platform-list span {
-            display: inline-block;
-            background-color: #e9ecef;
-            padding: 5px 10px;
-            margin-right: 5px;
-            margin-bottom: 5px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        #platform-list span.selected {
-            background-color: #007bff;
-            color: white;
-        }
-        .platform-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 5px;
-        }
-        .platform-item span {
-            flex-grow: 1;
-        }
-        .platform-item button {
-            background-color: #dc3545;
-            font-size: 12px;
-            padding: 5px 8px;
-            margin-left: 10px;
-        }
-        .platform-item button:hover {
-            background-color: #c82333;
-        }
-        #server-ips-list ul {
-            list-style-type: none;
-            padding-left: 0;
-        }
-        #server-ips-list li code {
-            background-color: #f0f0f0;
-            padding: 2px 4px;
-            border-radius: 3px;
-        }
-        .color-preview {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 1px solid #ccc;
-            vertical-align: middle;
-            margin-left: 10px;
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/mdbassit/Coloris@latest/dist/coloris.min.css">
+    <link rel="stylesheet" href="css/config-page.css">
 </head>
 <body>
     <div class="container">
-        <h1>OBS 타이머 설정</h1>
+        <h1>OBS Timer Configuration</h1>
 
-        <div class="form-group">
-            <label>서버 접속 정보 (원격 OBS 소스에서 사용):</label>
-            <div id="server-ips-list" style="padding: 10px; background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; font-size: 0.9em;">
-                <p>로딩 중...</p>
-            </div>
-        </div>
-        
+        <h2>플랫폼 관리</h2>
         <div class="form-group">
             <label for="current-platform">현재 선택된 플랫폼 (클릭하여 변경):</label>
             <div id="platform-list"></div>
         </div>
-
         <div class="form-group add-platform-group">
-            <input type="text" id="new-platform-name" placeholder="새 플랫폼 이름 입력 후 Enter 또는 추가 버튼">
+            <label for="new-platform-name" style="display: none;">새 플랫폼 이름:</label>
+            <input type="text" id="new-platform-name" placeholder="새 플랫폼 이름 입력 후 Enter 또는 추가">
             <button id="add-platform-btn">추가</button>
         </div>
 
-        <div class="form-group">
-            <label for="bg-color">배경색:</label>
-            <input type="color" id="bg-color" value="#000000">
-            <span id="bg-color-preview" class="color-preview"></span>
+        <h2>디스플레이 스타일 설정</h2>
+        <div class="form-group color-input-group">
+            <label for="backgroundColor">오버레이 배경색:</label>
+            <input type="text" id="backgroundColor" name="backgroundColor" data-coloris>
         </div>
         <div class="form-group">
-            <label for="bg-alpha">배경 투명도 (0.0 ~ 1.0):</label>
-            <input type="range" id="bg-alpha" min="0" max="1" step="0.01" value="0.65" style="width: 100%;">
-            <span id="bg-alpha-value">0.65</span>
+            <label for="fontSizeEpisode">에피소드 제목 폰트 크기 (pt):</label>
+            <input type="number" id="fontSizeEpisode" name="fontSizeEpisode" min="1">
         </div>
-
         <div class="form-group">
-            <label for="font-size-main">메인 제목 폰트 크기 (pt):</label>
-            <input type="number" id="font-size-main" value="22" min="1">
+            <label for="fontSizeSeries">시리즈 제목 폰트 크기 (pt):</label>
+            <input type="number" id="fontSizeSeries" name="fontSizeSeries" min="1">
         </div>
 
-        <div class="form-group">
-            <label for="font-size-sub">서브 제목 폰트 크기 (pt):</label>
-            <input type="number" id="font-size-sub" value="14" min="1">
+        <h3>폰트 색상</h3>
+        <div class="settings-grid">
+            <div class="form-group color-input-group"><label for="fontColorEpisode">에피소드 제목:</label><input type="text" id="fontColorEpisode" name="fontColorEpisode" data-coloris></div>
+            <div class="form-group color-input-group"><label for="fontColorSeries">시리즈 제목:</label><input type="text" id="fontColorSeries" name="fontColorSeries" data-coloris></div>
+            <div class="form-group color-input-group"><label for="fontColorTime">시간 텍스트:</label><input type="text" id="fontColorTime" name="fontColorTime" data-coloris></div>
+            <div class="form-group color-input-group"><label for="fontColorProgress">진행률(%):</label><input type="text" id="fontColorProgress" name="fontColorProgress" data-coloris></div>
         </div>
 
-        <button id="save-config-btn" style="width: 100%; padding: 12px; font-size: 18px;">설정 저장</button>
+        <h3>진행바 색상</h3>
+        <div class="settings-grid">
+            <div class="form-group color-input-group"><label for="progressBarFilledColor">채워진 바:</label><input type="text" id="progressBarFilledColor" name="progressBarFilledColor" data-coloris></div>
+            <div class="form-group color-input-group"><label for="progressBarBackgroundColor">바 배경:</label><input type="text" id="progressBarBackgroundColor" name="progressBarBackgroundColor" data-coloris></div>
+            <div class="form-group color-input-group"><label for="progressDotColor">진행 점:</label><input type="text" id="progressDotColor" name="progressDotColor" data-coloris></div>
+        </div>
+        
+        <h3>플랫폼 알약 색상</h3>
+        <div class="settings-grid">
+            <div class="form-group color-input-group"><label for="pillActiveBackgroundColor">활성 배경:</label><input type="text" id="pillActiveBackgroundColor" name="pillActiveBackgroundColor" data-coloris></div>
+            <div class="form-group color-input-group"><label for="pillActiveFontColor">활성 폰트:</label><input type="text" id="pillActiveFontColor" name="pillActiveFontColor" data-coloris></div>
+            <div class="form-group color-input-group"><label for="pillInactiveBackgroundColor">비활성 배경:</label><input type="text" id="pillInactiveBackgroundColor" name="pillInactiveBackgroundColor" data-coloris></div>
+            <div class="form-group color-input-group"><label for="pillInactiveFontColor">비활성 폰트:</label><input type="text" id="pillInactiveFontColor" name="pillInactiveFontColor" data-coloris></div>
+        </div>
+
+        <button id="saveButton">설정 저장</button>
+        <div id="status-message"></div>
+
+        <h2 id="server-info-header" style="cursor: pointer;">서버 정보 (클릭하여 보기/숨기기) ▼</h2>
+        <p style="color: red; font-weight: bold;">주의: 아래 IP 주소는 로컬 네트워크 내 다른 장치에서 서버 접속 시 필요할 수 있으나, 외부에 노출되지 않도록 주의하세요.</p>
+        <div id="server-info-content" style="display: none;"> <!-- Initially hidden -->
+            <p>서버 IP 주소:</p>
+            <div id="server-ips">서버 정보를 불러오는 중...</div>
+        </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            loadConfig();
+    <div id="preview-area">
+        <h2>미리보기</h2>
+        <div class="preview-overlay" id="preview-video-overlay">
+            <div class="preview-titles titles">
+                <span class="title-sub" id="preview-title-series">시리즈 제목 예시 (예: ONE PIECE)</span>
+                <span class="title-main" id="preview-title-episode">에피소드 제목 예시 (예: 원피스 1071화)</span>
+            </div>
+            <div class="preview-progress-bar-container" id="preview-progress-bar-container">
+                <div class="preview-progress-bar" id="preview-progress-bar"></div>
+                <div class="preview-progress-dot" id="preview-progress-dot"></div>
+            </div>
+            <div class="preview-time-display-container">
+                <div class="preview-time-info">
+                    <span class="preview-current-time" id="preview-current-time">10:00</span>
+                    <span class="preview-time-separator">/</span>
+                    <span class="preview-total-time" id="preview-total-time">23:45</span>
+                </div>
+                <span class="preview-progress-percentage" id="preview-progress-percentage">42%</span>
+            </div>
+            <div class="preview-platform-pills" id="preview-platform-pills-container">
+                <span class="preview-platform-pill active">Platform A</span>
+                <span class="preview-platform-pill">Platform B</span>
+            </div>
+        </div>
+    </div>
 
-            const bgColorInput = document.getElementById('bg-color');
-            const bgColorPreview = document.getElementById('bg-color-preview');
-            const bgAlphaInput = document.getElementById('bg-alpha');
-            const bgAlphaValueSpan = document.getElementById('bg-alpha-value');
-
-            function updateCombinedBackgroundColorPreview() {
-                const hexColor = bgColorInput.value;
-                const alpha = parseFloat(bgAlphaInput.value);
-                const {r, g, b} = hexToRgb(hexColor);
-                bgColorPreview.style.backgroundColor = `rgba(${r}, ${g}, ${b}, ${alpha})`;
-                bgAlphaValueSpan.textContent = alpha.toFixed(2);
-            }
-
-            bgColorInput.addEventListener('input', updateCombinedBackgroundColorPreview);
-            bgAlphaInput.addEventListener('input', updateCombinedBackgroundColorPreview);
-
-            document.getElementById('new-platform-name').addEventListener('keypress', function(event) {
-                if (event.key === 'Enter') {
-                    event.preventDefault(); // 기본 Enter 동작 방지 (폼 제출 등)
-                    document.getElementById('add-platform-btn').click();
-                }
-            });
-        });
-
-        function hexToRgb(hex) {
-            const bigint = parseInt(hex.slice(1), 16);
-            const r = (bigint >> 16) & 255;
-            const g = (bigint >> 8) & 255;
-            const b = bigint & 255;
-            return { r, g, b };
-        }
-
-        function rgbToHexAndAlpha(rgbaString) {
-            if (!rgbaString || !rgbaString.startsWith('rgba')) {
-                return { hex: '#000000', alpha: 0.65 }; // 기본값
-            }
-            const parts = rgbaString.match(/rgba\((\d+),\s*(\d+),\s*(\d+),\s*([\d\.]+)\)/);
-            if (!parts) return { hex: '#000000', alpha: 0.65 };
-
-            const r = parseInt(parts[1]);
-            const g = parseInt(parts[2]);
-            const b = parseInt(parts[3]);
-            const alpha = parseFloat(parts[4]);
-
-            const componentToHex = (c) => {
-                const hex = c.toString(16);
-                return hex.length == 1 ? "0" + hex : hex;
-            };
-            const hex = "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
-            return { hex, alpha };
-        }
-
-        async function loadConfig() {
-            try {
-                const response = await fetch('/api/config');
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                const config = await response.json();
-                
-                const { hex, alpha } = rgbToHexAndAlpha(config.backgroundColor || 'rgba(0,0,0,0.65)');
-                document.getElementById('bg-color').value = hex;
-                document.getElementById('bg-alpha').value = alpha;
-                document.getElementById('bg-alpha-value').textContent = alpha.toFixed(2);
-                document.getElementById('bg-color-preview').style.backgroundColor = `rgba(${hexToRgb(hex).r}, ${hexToRgb(hex).g}, ${hexToRgb(hex).b}, ${alpha})`;
-
-                document.getElementById('font-size-main').value = config.fontSizeMain || 22;
-                document.getElementById('font-size-sub').value = config.fontSizeSub || 14;
-
-                renderPlatformList(config.platforms || ["Default"], config.currentPlatformIndex || 0);
-                renderServerIPs(config.serverIPs || []);
-
-            } catch (error) {
-                console.error("Error loading config:", error);
-                alert("설정을 불러오는 데 실패했습니다.");
-            }
-        }
-
-        function renderServerIPs(ips) {
-            const listDiv = document.getElementById('server-ips-list');
-            listDiv.innerHTML = '';
-            if (ips.length > 0) {
-                const p = document.createElement('p');
-                p.textContent = '이 PC에서 사용 가능한 IP 주소들입니다. 다른 PC의 OBS 브라우저 소스에서 WebSocket 연결 시 다음 주소들을 사용하세요:';
-                listDiv.appendChild(p);
-                const ul = document.createElement('ul');
-                ips.forEach(ip => {
-                    const li = document.createElement('li');
-                    li.innerHTML = `  - <strong><code>ws://${ip}:3000</code></strong> (OBS 브라우저 소스용)<br>  - (설정 페이지 접속: <code>http://${ip}:3000/config</code>)`;
-                    ul.appendChild(li);
-                });
-                listDiv.appendChild(ul);
-            } else {
-                listDiv.innerHTML = '<p>사용 가능한 외부 접속 IP 주소를 찾을 수 없습니다. 서버가 로컬 네트워크에 올바르게 연결되어 있는지 확인하세요. 현재는 <code>localhost</code> 또는 <code>127.0.0.1</code>로만 접속 가능합니다.</p>';
-            }
-        }
-
-        function renderPlatformList(platforms, currentIndex) {
-            const platformListDiv = document.getElementById('platform-list');
-            platformListDiv.innerHTML = '';
-            platforms.forEach((platform, index) => {
-                const platformDiv = document.createElement('div');
-                platformDiv.classList.add('platform-item');
-                const platformSpan = document.createElement('span');
-                platformSpan.textContent = platform;
-                platformSpan.dataset.index = index;
-                if (index === currentIndex) platformSpan.classList.add('selected');
-                platformSpan.onclick = () => selectPlatform(index);
-                const deleteButton = document.createElement('button');
-                deleteButton.textContent = '삭제';
-                deleteButton.onclick = (event) => {
-                    event.stopPropagation();
-                    deletePlatform(index);
-                };
-                platformDiv.appendChild(platformSpan);
-                platformDiv.appendChild(deleteButton);
-                platformListDiv.appendChild(platformDiv);
-            });
-        }
-
-        function selectPlatform(index) {
-            const currentConfig = getCurrentFormConfig(false); // 저장 목적이 아니므로 플랫폼 DOM만 읽음
-            renderPlatformList(currentConfig.platforms, index);
-        }
-
-        document.getElementById('add-platform-btn').addEventListener('click', () => {
-            const newPlatformNameInput = document.getElementById('new-platform-name');
-            const newPlatformName = newPlatformNameInput.value.trim();
-            if (newPlatformName) {
-                const currentConfig = getCurrentFormConfig(false);
-                if (!currentConfig.platforms.includes(newPlatformName)) {
-                    currentConfig.platforms.push(newPlatformName);
-                    renderPlatformList(currentConfig.platforms, currentConfig.currentPlatformIndex);
-                    newPlatformNameInput.value = '';
-                } else {
-                    alert('이미 존재하는 플랫폼 이름입니다.');
-                }
-            } else {
-                alert('플랫폼 이름을 입력해주세요.');
-            }
-        });
-
-        function deletePlatform(indexToDelete) {
-            const currentConfig = getCurrentFormConfig(false);
-            if (currentConfig.platforms.length <= 1) {
-                alert("최소 하나 이상의 플랫폼이 필요합니다.");
-                return;
-            }
-            const oldCurrentIndex = currentConfig.currentPlatformIndex;
-            currentConfig.platforms.splice(indexToDelete, 1);
-            let newCurrentIndex = oldCurrentIndex;
-            if (oldCurrentIndex === indexToDelete) {
-                newCurrentIndex = 0; // 삭제된 것이 현재 선택된 것이면 0번으로
-            } else if (oldCurrentIndex > indexToDelete) {
-                newCurrentIndex = oldCurrentIndex - 1; // 선택된 것보다 앞의 것이 삭제되면 인덱스 당김
-            }
-            renderPlatformList(currentConfig.platforms, newCurrentIndex);
-        }
-        
-        // getCurrentFormConfig는 현재 화면의 상태를 읽어 객체로 반환
-        // isSaving이 true일 경우, rgba 문자열로 변환
-        function getCurrentFormConfig(isSaving = true) {
-            const platforms = [];
-            document.querySelectorAll('#platform-list .platform-item span').forEach(span => platforms.push(span.textContent));
-            
-            const selectedSpan = document.querySelector('#platform-list .platform-item span.selected');
-            let currentIndex = 0;
-            if (selectedSpan) {
-                currentIndex = parseInt(selectedSpan.dataset.index);
-            } else if (platforms.length > 0) {
-                 // 선택된 항목이 없으면 첫번째 항목을 선택된 것으로 간주 (삭제 등으로 인해 발생 가능)
-                currentIndex = 0; 
-            }
-
-            const hexColor = document.getElementById('bg-color').value;
-            const alpha = parseFloat(document.getElementById('bg-alpha').value);
-            let finalBackgroundColor = hexColor; // 기본적으로 hex
-            if (isSaving) { // 저장 시에만 rgba 문자열로 변환
-                 const {r, g, b} = hexToRgb(hexColor);
-                 finalBackgroundColor = `rgba(${r},${g},${b},${alpha.toFixed(2)})`;
-            }
-
-            return {
-                platforms: platforms,
-                currentPlatformIndex: currentIndex,
-                backgroundColor: finalBackgroundColor, // 저장 시에는 rgba, 평소에는 hex
-                fontSizeMain: parseInt(document.getElementById('font-size-main').value) || 22,
-                fontSizeSub: parseInt(document.getElementById('font-size-sub').value) || 14
-            };
-        }
-
-        document.getElementById('save-config-btn').addEventListener('click', async () => {
-            const configToSave = getCurrentFormConfig(true); // 저장 목적이므로 rgba로 변환
-
-            try {
-                const response = await fetch('/api/config', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(configToSave)
-                });
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
-                }
-                alert('설정이 저장되었습니다!');
-                loadConfig(); // 저장 후 최신 설정 다시 로드하여 화면 갱신
-            } catch (error) {
-                console.error("Error saving config:", error);
-                alert(`설정 저장에 실패했습니다: ${error.message}`);
-            }
-        });
-    </script>
+    <script src="https://cdn.jsdelivr.net/gh/mdbassit/Coloris@latest/dist/coloris.min.js"></script>
+    <script src="js/config-page.js" defer></script>
 </body>
 </html> 
