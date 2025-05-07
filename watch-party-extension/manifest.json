@@ -11,14 +11,14 @@
     "*://*.laftel.net/*"
   ],
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "background-script.js"
   },
   "content_scripts": [
     {
       "matches": [
         "*://*.laftel.net/player/*"
       ],
-      "js": ["content.js"]
+      "js": ["content-script.js"]
     }
   ],
   "action": {

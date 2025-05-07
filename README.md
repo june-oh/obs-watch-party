@@ -19,8 +19,8 @@ It consists of two main components:
 
 1.  **Chrome Extension (`watch-party-extension/`)**: Extracts playback information from the streaming service's web player.
     *   [Detailed README for the Extension](./watch-party-extension/README.md)
-2.  **Node.js Server (`obs_timer_server/`)**: Receives data from the extension and serves a customizable HTML overlay for OBS to display the timer and video details.
-    *   [Detailed README for the Server](./obs_timer_server/README.md)
+2.  **Node.js Server (`obs-timer-server/`)**: Receives data from the extension and serves a customizable HTML overlay for OBS to display the timer and video details.
+    *   [Detailed README for the Server](./obs-timer-server/README.md)
 
 ## Core Features
 
@@ -49,9 +49,9 @@ There are two main ways to use this project:
 If you just want to use the timer for your watch parties or streams without dealing with code:
 
 *   **Server Application**:
-    *   Download the pre-built server executable (`obs_timer_server.exe` for Windows, other OS versions may be provided in releases).
+    *   Download the pre-built server executable (`obs-timer-server.exe` for Windows, other OS versions may be provided in releases).
     *   Run the executable. No Node.js installation is required.
-    *   Detailed instructions can be found in the [Server README's "Packaging (Executable)" section](./obs_timer_server/README.md#packaging-executable) (once releases are available).
+    *   Detailed instructions can be found in the [Server README's "Packaging (Executable)" section](./obs-timer-server/README.md#packaging-executable) (once releases are available).
 *   **Chrome Extension**:
     *   Install the Chrome Extension. This might be available via a `.crx` file or by loading the unpacked extension from the `watch-party-extension` directory.
     *   Follow the [Extension README's "Setup and Usage" section](./watch-party-extension/README.md#setup-and-usage).
@@ -64,17 +64,17 @@ If you just want to use the timer for your watch parties or streams without deal
 If you want to modify the code, contribute, or run the server directly using Node.js:
 
 *   **Prerequisites**:
-    *   Node.js (version specified in `obs_timer_server/README.md`)
+    *   Node.js (version specified in `obs-timer-server/README.md`)
     *   Git (for cloning the repository)
 *   **Setup**:
     1.  Clone this repository: `git clone https://github.com/june-oh/obs-watch-party.git`
-    2.  Navigate to the `obs_timer_server` directory and install dependencies: `cd obs_timer_server && npm install`
-    3.  Follow the server setup instructions in the [Server README](./obs_timer_server/README.md#setup-and-usage).
+    2.  Navigate to the `obs-timer-server` directory and install dependencies: `cd obs-timer-server && npm install`
+    3.  Follow the server setup instructions in the [Server README](./obs-timer-server/README.md#setup-and-usage).
     4.  For the extension, load it as an unpacked extension from the `watch-party-extension` directory as described in the [Extension README](./watch-party-extension/README.md#setup-and-usage).
 *   **Running**:
-    *   Start the Node.js server: `cd obs_timer_server && node src/server.js` (or as specified in its README).
+    *   Start the Node.js server: `cd obs-timer-server && node src/server-main.js` (or as specified in its README).
     *   Ensure the Chrome extension is active in your browser.
-*   **Building (Optional)**: If you make changes to the server and want to create an executable, follow the build instructions in the [Server README](./obs_timer_server/README.md#packaging-executable).
+*   **Building (Optional)**: If you make changes to the server and want to create an executable, follow the build instructions in the [Server README](./obs-timer-server/README.md#packaging-executable).
 
 ## Future Plans
 

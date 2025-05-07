@@ -19,8 +19,8 @@
 
 1.  **크롬 확장 프로그램 (`watch-party-extension/`)**: 스트리밍 서비스의 웹 플레이어에서 재생 정보를 추출합니다.
     *   [확장 프로그램 상세 README (영문)](./watch-party-extension/README.md)
-2.  **Node.js 서버 (`obs_timer_server/`)**: 확장 프로그램으로부터 데이터를 수신하고, OBS에 타이머 및 비디오 상세 정보를 표시하기 위한 사용자 설정 가능한 HTML 오버레이를 제공합니다.
-    *   [서버 상세 README (영문)](./obs_timer_server/README.md)
+2.  **Node.js 서버 (`obs-timer-server/`)**: 확장 프로그램으로부터 데이터를 수신하고, OBS에 타이머 및 비디오 상세 정보를 표시하기 위한 사용자 설정 가능한 HTML 오버레이를 제공합니다.
+    *   [서버 상세 README (영문)](./obs-timer-server/README.md)
 
 ## 주요 기능
 
@@ -49,9 +49,9 @@
 코드 수정 없이 단순히 워치 파티나 스트리밍에 타이머를 사용하고 싶다면:
 
 *   **서버 애플리케이션**:
-    *   미리 빌드된 서버 실행 파일(`obs_timer_server.exe` - Windows용, 다른 OS 버전은 릴리즈 섹션에 제공될 수 있음)을 다운로드합니다.
+    *   미리 빌드된 서버 실행 파일(`obs-timer-server.exe` - Windows용, 다른 OS 버전은 릴리즈 섹션에 제공될 수 있음)을 다운로드합니다.
     *   실행 파일을 실행합니다. Node.js를 별도로 설치할 필요가 없습니다.
-    *   자세한 내용은 [서버 README의 "패키징 (실행 파일)" 섹션 (영문)](./obs_timer_server/README.md#packaging-executable)을 참고하세요 (릴리즈가 준비되는 대로).
+    *   자세한 내용은 [서버 README의 "패키징 (실행 파일)" 섹션 (영문)](./obs-timer-server/README.md#packaging-executable)을 참고하세요 (릴리즈가 준비되는 대로).
 *   **크롬 확장 프로그램**:
     *   크롬 확장 프로그램을 설치합니다. `.crx` 파일 형태로 제공되거나, `watch-party-extension` 디렉토리에서 압축 해제된 확장 프로그램을 로드하여 사용할 수 있습니다.
     *   [확장 프로그램 README의 "설치 및 사용법" 섹션 (영문)](./watch-party-extension/README.md#setup-and-usage)을 따릅니다.
@@ -64,17 +64,17 @@
 코드를 수정하거나, 기여하거나, Node.js를 사용하여 서버를 직접 실행하고 싶다면:
 
 *   **사전 준비물**:
-    *   Node.js (`obs_timer_server/README.md`에 명시된 버전)
+    *   Node.js (`obs-timer-server/README.md`에 명시된 버전)
     *   Git (저장소 복제용)
 *   **설정**:
     1.  이 저장소를 복제합니다: `git clone https://github.com/june-oh/obs-watch-party.git`
-    2.  `obs_timer_server` 디렉토리로 이동하여 의존성을 설치합니다: `cd obs_timer_server && npm install`
-    3.  [서버 README (영문)](./obs_timer_server/README.md#setup-and-usage)의 서버 설정 안내를 따릅니다.
+    2.  `obs-timer-server` 디렉토리로 이동하여 의존성을 설치합니다: `cd obs-timer-server && npm install`
+    3.  [서버 README (영문)](./obs-timer-server/README.md#setup-and-usage)의 서버 설정 안내를 따릅니다.
     4.  확장 프로그램의 경우, [확장 프로그램 README (영문)](./watch-party-extension/README.md#setup-and-usage)에 설명된 대로 `watch-party-extension` 디렉토리에서 압축 해제된 확장 프로그램으로 로드합니다.
 *   **실행**:
-    *   Node.js 서버를 시작합니다: `cd obs_timer_server && node src/server.js` (또는 해당 README에 명시된 대로).
+    *   Node.js 서버를 시작합니다: `cd obs-timer-server && node src/server-main.js` (또는 해당 README에 명시된 대로).
     *   브라우저에서 크롬 확장 프로그램이 활성화되어 있는지 확인합니다.
-*   **빌드 (선택 사항)**: 서버 코드를 변경하고 실행 파일을 만들고 싶다면, [서버 README (영문)](./obs_timer_server/README.md#packaging-executable)의 빌드 안내를 따릅니다.
+*   **빌드 (선택 사항)**: 서버 코드를 변경하고 실행 파일을 만들고 싶다면, [서버 README (영문)](./obs-timer-server/README.md#packaging-executable)의 빌드 안내를 따릅니다.
 
 ## 향후 계획
 
