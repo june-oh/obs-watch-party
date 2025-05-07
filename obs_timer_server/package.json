@@ -1,0 +1,32 @@
+{
+  "name": "obs-timer-server",
+  "version": "1.0.0",
+  "description": "OBS Timer Server",
+  "main": "src/server.js",
+  "bin": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "build": "if not exist dist mkdir dist && esbuild src/server.js --bundle --outfile=dist/server.bundle.js --platform=node --format=cjs && node --experimental-sea-config sea-config.json && node -e \"require('fs').copyFileSync(process.execPath, 'dist/obs-timer-server.exe')\" && npx postject dist/obs-timer-server.exe NODE_SEA_BLOB dist/obs-timer-server.blob --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2 --overwrite && del dist\\obs-timer-server.blob && del dist\\server.bundle.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "pkg": {
+    "assets": [
+      "public/obs-display.html"
+    ],
+    "targets": [
+      "node18-win-x64"
+    ],
+    "outputPath": "dist"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ws": "^8.17.0"
+  },
+  "devDependencies": {
+    "pkg": "^5.8.1",
+    "postject": "1.0.0-alpha.6",
+    "esbuild": "^0.20.2"
+  }
+}

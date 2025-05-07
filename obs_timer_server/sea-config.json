@@ -1,0 +1,9 @@
+{
+  "main": "dist/server.bundle.js",
+  "output": "dist/obs-timer-server.blob",
+  "disableExperimentalSEAWarning": true,
+  "assets": {
+    "obs-display.html": "./public/obs-display.html",
+    "config-page.html": "./public/config-page.html"
+  }
+} 

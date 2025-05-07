@@ -1,0 +1,36 @@
+{
+  "manifest_version": 3,
+  "name": "비디오 타이틀＆타이머 표시기",
+  "version": "1.0",
+  "description": "현재 탭의 비디오 정보를 OBS 서버로 전송하고 연결 상태를 아이콘으로 표시합니다.",
+  "permissions": [
+    "scripting",
+    "tabs"
+  ],
+  "host_permissions": [
+    "*://*.laftel.net/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.laftel.net/player/*"
+      ],
+      "js": ["content.js"]
+    }
+  ],
+  "action": {
+    "default_title": "비디오 정보 보내기 시작/중지",
+    "default_icon": {
+      "16": "icons/icon-inactive-16.png",
+      "48": "icons/icon-inactive-48.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon-inactive-16.png",
+    "48": "icons/icon-inactive-48.png",
+    "128": "icons/icon-inactive-128.png"
+  }
+} 
