@@ -1,11 +1,15 @@
 # Watch Party OBS Timer
 
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
-[![GitHub last commit](https://img.shields.io/github/last-commit/june.oh/watch-party-obs-timer)](https://github.com/june.oh/watch-party-obs-timer/commits/main)
-[![GitHub issues](https://img.shields.io/github/issues/june.oh/watch-party-obs-timer)](https://github.com/june.oh/watch-party-obs-timer/issues)
-[![GitHub stars](https://img.shields.io/github/stars/june.oh/watch-party-obs-timer?style=social)](https://github.com/june.oh/watch-party-obs-timer/stargazers)
-<!-- [![GitHub release (latest by date)](https://img.shields.io/github/v/release/june.oh/watch-party-obs-timer)](https://github.com/june.oh/watch-party-obs-timer/releases/latest) -->
-<!-- [![Build Status](https://github.com/june.oh/watch-party-obs-timer/actions/workflows/main.yml/badge.svg)](https://github.com/june.oh/watch-party-obs-timer/actions/workflows/main.yml) -->
+[![GitHub last commit](https://img.shields.io/github/last-commit/june-oh/obs-watch-party)](https://github.com/june-oh/obs-watch-party/commits/main)
+[![GitHub issues](https://img.shields.io/github/issues/june-oh/obs-watch-party)](https://github.com/june-oh/obs-watch-party/issues)
+[![GitHub stars](https://img.shields.io/github/stars/june-oh/obs-watch-party?style=social)](https://github.com/june-oh/obs-watch-party/stargazers)
+[![Made with HTML5](https://img.shields.io/badge/HTML-5-orange.svg?style=flat-square&logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5)
+[![Made with CSS3](https://img.shields.io/badge/CSS-3-blue.svg?style=flat-square&logo=css3&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/CSS)
+[![Made with JavaScript](https://img.shields.io/badge/JavaScript-ES6-yellow.svg?style=flat-square&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+[![Runs with Node.js](https://img.shields.io/badge/Node.js-LTS-green.svg?style=flat-square&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
+<!-- [![GitHub release (latest by date)](https://img.shields.io/github/v/release/june-oh/obs-watch-party)](https://github.com/june-oh/obs-watch-party/releases/latest) -->
+<!-- [![Build Status](https://github.com/june-oh/obs-watch-party/actions/workflows/main.yml/badge.svg)](https://github.com/june-oh/obs-watch-party/actions/workflows/main.yml) -->
 
 [Read this in Korean (한국어 버전)](./README.ko.md)
 
@@ -13,8 +17,8 @@ This project helps display video playback information (title, subtitle, current 
 
 It consists of two main components:
 
-1.  **Chrome Extension (`my-timer-extension/`)**: Extracts playback information from the streaming service's web player.
-    *   [Detailed README for the Extension](./my-timer-extension/README.md)
+1.  **Chrome Extension (`watch-party-extension/`)**: Extracts playback information from the streaming service's web player.
+    *   [Detailed README for the Extension](./watch-party-extension/README.md)
 2.  **Node.js Server (`obs_timer_server/`)**: Receives data from the extension and serves a customizable HTML overlay for OBS to display the timer and video details.
     *   [Detailed README for the Server](./obs_timer_server/README.md)
 
@@ -49,8 +53,8 @@ If you just want to use the timer for your watch parties or streams without deal
     *   Run the executable. No Node.js installation is required.
     *   Detailed instructions can be found in the [Server README's "Packaging (Executable)" section](./obs_timer_server/README.md#packaging-executable) (once releases are available).
 *   **Chrome Extension**:
-    *   Install the Chrome Extension. This might be available via a `.crx` file or by loading the unpacked extension from the `my-timer-extension` directory.
-    *   Follow the [Extension README's "Setup and Usage" section](./my-timer-extension/README.md#setup-and-usage).
+    *   Install the Chrome Extension. This might be available via a `.crx` file or by loading the unpacked extension from the `watch-party-extension` directory.
+    *   Follow the [Extension README's "Setup and Usage" section](./watch-party-extension/README.md#setup-and-usage).
 *   **OBS Configuration**: Add the server's display page (e.g., `http://localhost:3000` if the server is running on the same PC) as a Browser Source in OBS Studio.
 
 *(Note: Pre-built executables and extension packages will be made available under the "Releases" section of this repository once finalized.)*
@@ -63,10 +67,10 @@ If you want to modify the code, contribute, or run the server directly using Nod
     *   Node.js (version specified in `obs_timer_server/README.md`)
     *   Git (for cloning the repository)
 *   **Setup**:
-    1.  Clone this repository: `git clone https://github.com/june.oh/watch-party-obs-timer.git`
+    1.  Clone this repository: `git clone https://github.com/june-oh/obs-watch-party.git`
     2.  Navigate to the `obs_timer_server` directory and install dependencies: `cd obs_timer_server && npm install`
     3.  Follow the server setup instructions in the [Server README](./obs_timer_server/README.md#setup-and-usage).
-    4.  For the extension, load it as an unpacked extension from the `my-timer-extension` directory as described in the [Extension README](./my-timer-extension/README.md#setup-and-usage).
+    4.  For the extension, load it as an unpacked extension from the `watch-party-extension` directory as described in the [Extension README](./watch-party-extension/README.md#setup-and-usage).
 *   **Running**:
     *   Start the Node.js server: `cd obs_timer_server && node src/server.js` (or as specified in its README).
     *   Ensure the Chrome extension is active in your browser.
@@ -81,7 +85,9 @@ If you want to modify the code, contribute, or run the server directly using Nod
 
 ## Contributing
 
-Contributions are welcome! If you have ideas for new features, improvements, or bug fixes, please feel free to:
+Contributions are welcome! For more details on how to contribute, including our branching strategy, commit conventions, and versioning, please see our [Contributing Guidelines](./CONTRIBUTING.md).
+
+If you have ideas for new features, improvements, or bug fixes, please feel free to:
 
 1.  Open an issue to discuss your ideas.
 2.  Fork the repository and submit a pull request with your changes.

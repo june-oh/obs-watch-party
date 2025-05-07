@@ -1,11 +1,15 @@
 # Watch Party OBS Timer (한국어)
 
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
-[![GitHub last commit](https://img.shields.io/github/last-commit/june.oh/watch-party-obs-timer)](https://github.com/june.oh/watch-party-obs-timer/commits/main)
-[![GitHub issues](https://img.shields.io/github/issues/june.oh/watch-party-obs-timer)](https://github.com/june.oh/watch-party-obs-timer/issues)
-[![GitHub stars](https://img.shields.io/github/stars/june.oh/watch-party-obs-timer?style=social)](https://github.com/june.oh/watch-party-obs-timer/stargazers)
-<!-- [![GitHub release (latest by date)](https://img.shields.io/github/v/release/june.oh/watch-party-obs-timer)](https://github.com/june.oh/watch-party-obs-timer/releases/latest) -->
-<!-- [![Build Status](https://github.com/june.oh/watch-party-obs-timer/actions/workflows/main.yml/badge.svg)](https://github.com/june.oh/watch-party-obs-timer/actions/workflows/main.yml) -->
+[![GitHub last commit](https://img.shields.io/github/last-commit/june-oh/obs-watch-party)](https://github.com/june-oh/obs-watch-party/commits/main)
+[![GitHub issues](https://img.shields.io/github/issues/june-oh/obs-watch-party)](https://github.com/june-oh/obs-watch-party/issues)
+[![GitHub stars](https://img.shields.io/github/stars/june-oh/obs-watch-party?style=social)](https://github.com/june-oh/obs-watch-party/stargazers)
+[![Made with HTML5](https://img.shields.io/badge/HTML-5-orange.svg?style=flat-square&logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5)
+[![Made with CSS3](https://img.shields.io/badge/CSS-3-blue.svg?style=flat-square&logo=css3&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/CSS)
+[![Made with JavaScript](https://img.shields.io/badge/JavaScript-ES6-yellow.svg?style=flat-square&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+[![Runs with Node.js](https://img.shields.io/badge/Node.js-LTS-green.svg?style=flat-square&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
+<!-- [![GitHub release (latest by date)](https://img.shields.io/github/v/release/june-oh/obs-watch-party)](https://github.com/june-oh/obs-watch-party/releases/latest) -->
+<!-- [![Build Status](https://github.com/june.oh/obs-watch-party/actions/workflows/main.yml/badge.svg)](https://github.com/june.oh/obs-watch-party/actions/workflows/main.yml) -->
 
 [View English Version](./README.md)
 
@@ -13,8 +17,8 @@
 
 두 가지 주요 구성 요소로 이루어져 있습니다:
 
-1.  **크롬 확장 프로그램 (`my-timer-extension/`)**: 스트리밍 서비스의 웹 플레이어에서 재생 정보를 추출합니다.
-    *   [확장 프로그램 상세 README (영문)](./my-timer-extension/README.md)
+1.  **크롬 확장 프로그램 (`watch-party-extension/`)**: 스트리밍 서비스의 웹 플레이어에서 재생 정보를 추출합니다.
+    *   [확장 프로그램 상세 README (영문)](./watch-party-extension/README.md)
 2.  **Node.js 서버 (`obs_timer_server/`)**: 확장 프로그램으로부터 데이터를 수신하고, OBS에 타이머 및 비디오 상세 정보를 표시하기 위한 사용자 설정 가능한 HTML 오버레이를 제공합니다.
     *   [서버 상세 README (영문)](./obs_timer_server/README.md)
 
@@ -49,8 +53,8 @@
     *   실행 파일을 실행합니다. Node.js를 별도로 설치할 필요가 없습니다.
     *   자세한 내용은 [서버 README의 "패키징 (실행 파일)" 섹션 (영문)](./obs_timer_server/README.md#packaging-executable)을 참고하세요 (릴리즈가 준비되는 대로).
 *   **크롬 확장 프로그램**:
-    *   크롬 확장 프로그램을 설치합니다. `.crx` 파일 형태로 제공되거나, `my-timer-extension` 디렉토리에서 압축 해제된 확장 프로그램을 로드하여 사용할 수 있습니다.
-    *   [확장 프로그램 README의 "설치 및 사용법" 섹션 (영문)](./my-timer-extension/README.md#setup-and-usage)을 따릅니다.
+    *   크롬 확장 프로그램을 설치합니다. `.crx` 파일 형태로 제공되거나, `watch-party-extension` 디렉토리에서 압축 해제된 확장 프로그램을 로드하여 사용할 수 있습니다.
+    *   [확장 프로그램 README의 "설치 및 사용법" 섹션 (영문)](./watch-party-extension/README.md#setup-and-usage)을 따릅니다.
 *   **OBS 설정**: 서버 표시 페이지(예: 서버와 동일한 PC에서 실행 중인 경우 `http://localhost:3000`)를 OBS Studio의 브라우저 소스로 추가합니다.
 
 *(참고: 미리 빌드된 실행 파일 및 확장 프로그램 패키지는 준비가 완료되는 대로 이 저장소의 "Releases" 섹션에 제공될 예정입니다.)*
@@ -63,10 +67,10 @@
     *   Node.js (`obs_timer_server/README.md`에 명시된 버전)
     *   Git (저장소 복제용)
 *   **설정**:
-    1.  이 저장소를 복제합니다: `git clone https://github.com/june.oh/watch-party-obs-timer.git`
+    1.  이 저장소를 복제합니다: `git clone https://github.com/june-oh/obs-watch-party.git`
     2.  `obs_timer_server` 디렉토리로 이동하여 의존성을 설치합니다: `cd obs_timer_server && npm install`
     3.  [서버 README (영문)](./obs_timer_server/README.md#setup-and-usage)의 서버 설정 안내를 따릅니다.
-    4.  확장 프로그램의 경우, [확장 프로그램 README (영문)](./my-timer-extension/README.md#setup-and-usage)에 설명된 대로 `my-timer-extension` 디렉토리에서 압축 해제된 확장 프로그램으로 로드합니다.
+    4.  확장 프로그램의 경우, [확장 프로그램 README (영문)](./watch-party-extension/README.md#setup-and-usage)에 설명된 대로 `watch-party-extension` 디렉토리에서 압축 해제된 확장 프로그램으로 로드합니다.
 *   **실행**:
     *   Node.js 서버를 시작합니다: `cd obs_timer_server && node src/server.js` (또는 해당 README에 명시된 대로).
     *   브라우저에서 크롬 확장 프로그램이 활성화되어 있는지 확인합니다.
@@ -81,7 +85,9 @@
 
 ## 기여하기
 
-기여를 환영합니다! 새로운 기능, 개선 사항 또는 버그 수정에 대한 아이디어가 있다면 언제든지 다음을 수행해 주세요:
+기여를 환영합니다! 자세한 기여 방법(브랜칭 전략, 커밋 규약, 버전 관리 포함)은 [기여 가이드라인 (영문)](./CONTRIBUTING.md)을 참고해주세요.
+
+새로운 기능, 개선 사항 또는 버그 수정에 대한 아이디어가 있다면 언제든지 다음을 수행해 주세요:
 
 1.  아이디어를 논의하기 위해 이슈를 개설합니다.
 2.  저장소를 포크하고 변경 사항에 대한 풀 리퀘스트를 제출합니다.
