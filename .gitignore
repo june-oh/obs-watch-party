@@ -1,6 +1,28 @@
-# Node.js specific to obs_timer_server\n# Assuming package-lock.json or yarn.lock in obs_timer_server/ IS committed\nobs_timer_server/node_modules/\nobs_timer_server/npm-debug.log*\nobs_timer_server/yarn-debug.log*\nobs_timer_server/yarn-error.log*\n\n# Build artifacts (obs_timer_server)\n# .exe files are generated in obs_timer_server/dist/\nobs_timer_server/dist/\n\n# Editor/IDE specific\n.vscode/\n.idea/\n.cursor/\n\n# OS specific\n.DS_Store\nThumbs.db\n\n# Log files\n*.log\n\n# Environment variables (if any)\n.env
+# IDE / Editor specific
+.vscode/
+.idea/
+.cursor/
 
-# Executables in obs_timer_server root
-obs_timer_server/*.exe 
-# Node modules in any directory
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+
+# Node.js dependencies
+# package-lock.json or yarn.lock SHOULD be committed
 node_modules/
+
+# Build output / artifacts
+# For obs-timer-server, executables are typically in obs-timer-server/dist/
+obs-timer-server/dist/
+
+# If any .exe files are ever placed directly in obs-timer-server root (should be avoided)
+obs-timer-server/*.exe
