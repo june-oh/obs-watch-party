@@ -31,6 +31,9 @@
 ## 아키텍처
 
 ### 원컴 환경 (One-Computer Setup)
+```mermaid
+info
+```
 
 ```mermaid
 graph LR<br>
