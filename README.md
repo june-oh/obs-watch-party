@@ -31,12 +31,10 @@
 ## 아키텍처
 
 ### 원컴 환경 (One-Computer Setup)
-```mermaid
-info
-```
+
 
 ```mermaid
-graph LR<br>
+graph LR;
     subgraph "PC 1"<br>
         OBS --> BSource("Browser Source (obs-display.html)");<br>
         ChromeExt("Chrome Extension (Timer Data Source)") --> Server("Local Timer Server (server-main.js)");<br>
@@ -49,21 +47,21 @@ graph LR<br>
 ### 투컴 환경 (Two-Computer Setup)
 
 ```mermaid
-graph LR<br>
-    subgraph "PC 1 (게이밍/스트리밍 PC)"<br>
-        OBS --> BSource("Browser Source (obs-display.html)");<br>
-    end<br>
-<br>
-    subgraph "PC 2 (보조/서버 PC)"<br>
-        ChromeExt("Chrome Extension (Timer Data Source)") --> TimerServer("Timer Server (server-main.js on Railway/other)");<br>
-    end<br>
-<br>
-    StreamingPlatform("Streaming Platform (e.g., YouTube, Netflix)");<br>
-    ChromeExt -.-> |Reads data from| StreamingPlatform;<br>
-    TimerServer -- WebSocket --> BSource;<br>
-    BSource -- WebSocket --> TimerServer;<br>
-    <br>
-    style TimerServer fill:#f9f,stroke:#333,stroke-width:2px<br>
+graph LR;
+    subgraph "PC 1 (게이밍/스트리밍 PC)";
+        OBS --> BSource("Browser Source (obs-display.html)");
+    end;
+
+    subgraph "PC 2 (보조/서버 PC)";
+        ChromeExt("Chrome Extension (Timer Data Source)") --> TimerServer("Timer Server (server-main.js on Railway/other)");
+    end<;
+
+    StreamingPlatform("Streaming Platform (e.g., YouTube, Netflix)");
+    ChromeExt -.-> |Reads data from| StreamingPlatform;
+    TimerServer -- WebSocket --> BSource;
+    BSource -- WebSocket --> TimerServer;
+    
+    style TimerServer fill:#f9f,stroke:#333,stroke-width:2px;
 ```
 
 ## 기술 스택
