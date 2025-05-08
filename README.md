@@ -35,12 +35,12 @@
 ```mermaid
 graph LR;
   subgraph "PC 1";
-    OBS --> BSource<br>("Browser Source (obs-display.html)");  
-    ChromeExt("Chrome Extension <br>(Timer Data Source)") --> Server("Local Timer Server <br>(server-main.js)");  
+    OBS --> BSource<br/>("Browser Source (obs-display.html)");  
+    ChromeExt("Chrome Extension <br/>(Timer Data Source)") --> Server("Local Timer Server <br/>(server-main.js)");  
     Server --> BSource;  
     BSource -- WebSocket --> Server;  
   end;
-  ChromeExt -.->|Reads data from| StreamingPlatform("Streaming Platform <br>(LAFTEL)");  
+  ChromeExt -.->|Reads data from| StreamingPlatform("Streaming Platform <br/>(LAFTEL)");  
 ```
 
 ### Dual-Computer Setup
@@ -48,14 +48,14 @@ graph LR;
 ```mermaid
 graph LR;
   subgraph "PC 1 (Gaming/Streaming PC)";
-    OBS --> BSource("Browser Source (obs-display.html)");  
+    OBS --> BSource("Browser Source  <br/>(obs-display.html)");  
   end;
 
   subgraph "PC 2 (Auxiliary/Server/OBS PC)";
-    ChromeExt("Chrome Extension <br>(Timer Data Source)") --> TimerServer("Timer Server <br>(server-main.js on Railway/other)");  
+    ChromeExt("Chrome Extension <br/>(Timer Data Source)") --> TimerServer("Timer Server <br/>(server-main.js on Railway/other)");  
   end;
 
-  StreamingPlatform("Streaming Platform <br>(LAFTEL)");  
+  StreamingPlatform("Streaming Platform <br/>(LAFTEL)");  
   ChromeExt -.->|Reads data from| StreamingPlatform;  
   TimerServer -- WebSocket --> BSource;  
   BSource -- WebSocket --> TimerServer;  
