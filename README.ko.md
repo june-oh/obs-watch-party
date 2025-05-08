@@ -30,6 +30,43 @@
 *   원컴 및 투컴 스트리밍 환경 모두에서 쉽게 설정 가능하도록 설계.
 *   초기 Laftel 지원, 향후 더 많은 플랫폼을 지원하는 것을 목표로 유연하게 설계.
 
+## 아키텍처 
+
+### 원컴 환경 (One-Computer Setup)
+
+```mermaid
+graph LR<br>
+    subgraph "PC 1"<br>
+        OBS --> BSource("Browser Source (obs-display.html)");<br>
+        ChromeExt("Chrome Extension (Timer Data Source)") --> Server("Local Timer Server (server-main.js)");<br>
+        Server --> BSource;<br>
+        BSource -- WebSocket --> Server;<br>
+    end<br>
+    ChromeExt -.-> |Reads data from| StreamingPlatform("Streaming Platform (e.g., YouTube, Netflix)");<br>
+```  
+
+### 투컴 환경 (Two-Computer Setup)
+
+```mermaid
+graph LR<br>
+    subgraph "PC 1 (게이밍/스트리밍 PC)"<br>
+        OBS --> BSource("Browser Source (obs-display.html)");<br>
+    end<br>
+<br>
+    subgraph "PC 2 (보조/서버 PC)"<br>
+        ChromeExt("Chrome Extension (Timer Data Source)") --> TimerServer("Timer Server (server-main.js on Railway/other)");<br>
+    end<br>
+<br>
+    StreamingPlatform("Streaming Platform (e.g., YouTube, Netflix)");<br>
+    ChromeExt -.-> |Reads data from| StreamingPlatform;<br>
+    TimerServer -- WebSocket --> BSource;<br>
+    BSource -- WebSocket --> TimerServer;<br>
+    <br>
+    style TimerServer fill:#f9f,stroke:#333,stroke-width:2px<br>
+``` 
+
+
+
 ## 기술 스택
 
 *   **크롬 확장 프로그램**: JavaScript, HTML, CSS, Chrome Extension API, WebSockets

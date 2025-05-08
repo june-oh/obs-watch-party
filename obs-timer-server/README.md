@@ -15,7 +15,7 @@ This Node.js server application receives video playback information (title, subt
     *   Displays the video title, subtitle, current time, and duration.
     *   Styled for OBS overlay (transparent background, configurable content box background).
     *   Dynamically updates content based on data received from the server via WebSocket.
-    *   Shows a "연결 안됨" (Disconnected) message if the WebSocket connection to the server is lost or if no data is being received from the Chrome extension.
+    *   Shows a "연결 안됨" (Disconnected) message (currently in Korean, localization planned) if the WebSocket connection to the server is lost or if no data is being received from the Chrome extension.
     *   Font sizes for titles can be dynamically adjusted (larger if only one title is present).
     *   Time display is styled like a music player.
     *   Content is wrapped in a semi-transparent, rounded-corner box (`.overlay`) that spans the full width of the OBS browser source.
@@ -27,7 +27,8 @@ This Node.js server application receives video playback information (title, subt
         *   Background color of the `.overlay` box in `obs-display.html`.
         *   Text color for the platform display in `obs-display.html`.
         *   Font sizes for titles and time display.
-    *   Configuration is loaded from `config.json` on server start and saved back when updated via the `/config` web page.
+    *   Configuration is loaded from `config.json` on server start.
+    *   When running locally, changes made via the `/config` web page are saved back to `config.json`. (Note: In some server/cloud environments, direct file system writes might be restricted or ephemeral. For persistent configuration in such environments, using environment variables or a database is recommended for future versions.)
     *   The configuration page (`config-page.html`) provides a user-friendly interface to modify these settings.
 *   **Server IP Display:**
     *   On startup, the server logs its local network IP addresses to the console, making it easier to configure remote access if needed (e.g., for accessing the config page or OBS source from another device on the same network).
@@ -44,14 +45,14 @@ This Node.js server application receives video playback information (title, subt
 *   `package.json`: Defines project dependencies and scripts, including a `build` script for packaging the server using `pkg`.
 *   `clean-and-build.bat`: A batch script to clean the project (remove `node_modules`, `dist`) and then perform `npm install` and `npm run build`.
 
-## Setup and Usage
+## Setup and Usage (v1.0 - Local Server)
 
 1.  **Prerequisites:**
-    *   Node.js (version 21+ recommended for SEA features if not using `pkg`). The server was developed with Node `v22.15.0`.
+    *   Node.js (LTS version, e.g., v18 or v20, is generally recommended. This server was developed with Node `v22.15.0`. For SEA features, Node 21+ is needed if not using `pkg`.)
 2.  **Installation:**
     *   Clone the repository or download the files.
     *   Navigate to the `obs-timer-server` directory in your terminal.
-    *   Run `npm install` to install dependencies.
+    *   Run `npm install` (or `yarn install` if you use Yarn) to install dependencies.
 3.  **Running the Server:**
     *   Run `node src/server-main.js`.
     *   The server will start, and you should see console output indicating it's listening on a port (default: 3000) and displaying local IP addresses.
@@ -67,7 +68,7 @@ This Node.js server application receives video playback information (title, subt
         *   너비와 높이를 필요에 맞게 조정합니다.
         *   Chrome에 `watch-party-extension`이 설치 및 활성화되어 있고, Laftel 비디오가 재생 중인지 확인합니다.
 
-    *   **투컴 방송 환경 (Dual-PC Setup):**
+    *   **투컴 방송 환경 (Dual-PC Setup with Local Server):**
         *   **게임용 PC:** 게임, 웹 브라우저(확장 프로그램 실행), `obs-timer-server` 실행
         *   **송출용 PC:** OBS Studio 실행
         *   이 구성에서 `watch-party-extension`은 여전히 게임용 PC의 `obs-timer-server`와 통신하므로, 확장 프로그램 자체의 서버 주소 설정은 `localhost`로 유지됩니다.
@@ -95,7 +96,17 @@ While `pkg` is used for the primary build process, the server has been prepared 
 
 ### GUI for Configuration (Experimental - Paused)
 
-An attempt was made to integrate `node-gui` to provide a native GUI for configuration as an alternative to the web interface and direct `config.json` editing. This effort was paused due to persistent issues with `@nodegui/packer` (the NodeGui packaging tool), specifically around project initialization and build processes failing to generate necessary template files or encountering copy errors. The `gui.js` file and related dependencies (`@nodegui/nodegui`, `@nodegui/packer`) might still be present but are not part of the primary functional server.
+An attempt was made to integrate `node-gui` for a native GUI. This effort is currently paused and not part of the functional server.
+
+## Deployment to Cloud Platforms (e.g., Railway, Render - For Future Multi-User Support)
+
+While v1.0 is primarily designed for local execution, future versions aiming for multi-user support will benefit from cloud deployment. Key considerations for deploying to platforms like Railway or Render include:
+
+*   **Port Configuration**: The server must use the `PORT` environment variable provided by the platform (e.g., `process.env.PORT || 3000`).
+*   **Configuration Management**: `config.json` file writes may not be persistent. Configuration should be managed via environment variables or an external database.
+*   **State Management**: For multi-user support where each user has their own timer state, this state must be stored persistently, likely in a database (e.g., PostgreSQL, Redis) linked to the server application.
+*   **WebSocket URL**: Client-side JavaScript (`obs-display.js`) will need to dynamically determine the WebSocket URL based on the server's public address provided by the cloud platform.
+*   **Statelessness (if applicable)**: Some platforms might favor stateless application design, which would require careful handling of WebSocket connections and user sessions if not using session affinity features.
 
 ## Notes
 
