@@ -30,39 +30,39 @@
 
 ## 아키텍처
 
-### 원컴 환경 (One-Computer Setup)
-
-
-```mermaid
-graph LR;
-    subgraph "PC 1"<br>
-        OBS --> BSource("Browser Source (obs-display.html)");<br>
-        ChromeExt("Chrome Extension (Timer Data Source)") --> Server("Local Timer Server (server-main.js)");<br>
-        Server --> BSource;<br>
-        BSource -- WebSocket --> Server;<br>
-    end<br>
-    ChromeExt -.-> |Reads data from| StreamingPlatform("Streaming Platform (e.g., YouTube, Netflix)");<br>
-```
-
-### 투컴 환경 (Two-Computer Setup)
+### Single-Computer Setup
 
 ```mermaid
 graph LR;
-    subgraph "PC 1 (게이밍/스트리밍 PC)";
-        OBS --> BSource("Browser Source (obs-display.html)");
-    end;
-
-    subgraph "PC 2 (보조/서버 PC)";
-        ChromeExt("Chrome Extension (Timer Data Source)") --> TimerServer("Timer Server (server-main.js on Railway/other)");
-    end<;
-
-    StreamingPlatform("Streaming Platform (e.g., YouTube, Netflix)");
-    ChromeExt -.-> |Reads data from| StreamingPlatform;
-    TimerServer -- WebSocket --> BSource;
-    BSource -- WebSocket --> TimerServer;
-    
-    style TimerServer fill:#f9f,stroke:#333,stroke-width:2px;
+  subgraph "PC 1";
+    OBS --> BSource("Browser Source (obs-display.html)");  
+    ChromeExt("Chrome Extension (Timer Data Source)") --> Server("Local Timer Server (server-main.js)");  
+    Server --> BSource;  
+    BSource -- WebSocket --> Server;  
+  end;
+  ChromeExt -.->|Reads data from| StreamingPlatform("Streaming Platform (e.g., YouTube, Netflix)");  
 ```
+
+### Dual-Computer Setup
+
+```mermaid
+graph LR;
+  subgraph "PC 1 (Gaming/Streaming PC)";
+    OBS --> BSource("Browser Source (obs-display.html)");  
+  end;
+
+  subgraph "PC 2 (Auxiliary/Server/OBS PC)";
+    ChromeExt("Chrome Extension (Timer Data Source)") --> TimerServer("Timer Server (server-main.js on Railway/other)");  
+  end;
+
+  StreamingPlatform("Streaming Platform (e.g., YouTube, Netflix)");  
+  ChromeExt -.->|Reads data from| StreamingPlatform;  
+  TimerServer -- WebSocket --> BSource;  
+  BSource -- WebSocket --> TimerServer;  
+
+  style TimerServer fill:#f9f,stroke:#333,stroke-width:2px;  
+```
+
 
 ## 기술 스택
 
