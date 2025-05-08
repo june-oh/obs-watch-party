@@ -26,3 +26,5 @@ obs-timer-server/dist/
 
 # If any .exe files are ever placed directly in obs-timer-server root (should be avoided)
 obs-timer-server/*.exe
+
+refer/

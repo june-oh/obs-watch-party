@@ -1,4 +1,4 @@
-# Watch Party OBS Timer
+# Watch Party OBS Timer (한국어)
 
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 [![GitHub last commit](https://img.shields.io/github/last-commit/june-oh/obs-watch-party)](https://github.com/june-oh/obs-watch-party/commits/main)
@@ -8,100 +8,131 @@
 [![Made with CSS3](https://img.shields.io/badge/CSS-3-blue.svg?style=flat-square&logo=css3&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/CSS)
 [![Made with JavaScript](https://img.shields.io/badge/JavaScript-ES6-yellow.svg?style=flat-square&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
 [![Runs with Node.js](https://img.shields.io/badge/Node.js-LTS-green.svg?style=flat-square&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
-<!-- [![GitHub release (latest by date)](https://img.shields.io/github/v/release/june-oh/obs-watch-party)](https://github.com/june-oh/obs-watch-party/releases/latest) -->
-<!-- [![Build Status](https://github.com/june-oh/obs-watch-party/actions/workflows/main.yml/badge.svg)](https://github.com/june-oh/obs-watch-party/actions/workflows/main.yml) -->
 
-[Read this in Korean (한국어 버전)](./README.ko.md)
+[View English Version](./README.en.md)
 
-This project helps display video playback information (title, subtitle, current time, duration) from streaming services (initially Laftel, with plans for expansion) directly into OBS Studio. This is ideal for synchronized watch parties or enhancing personal streaming setups by showing what you're watching in real-time.
+이 프로젝트는 스트리밍 서비스(초기에는 Laftel을 지원하며, 향후 확장 계획이 있습니다)의 비디오 재생 정보(제목, 부제목, 현재 시간, 총 재생 시간)를 OBS Studio에 직접 표시하여, 동기화된 단체 시청(watch party) 경험을 향상시키거나 개인 스트리밍 중 현재 시청 중인 콘텐츠를 실시간으로 보여주는 데 이상적입니다.
 
-It consists of two main components:
+두 가지 주요 구성 요소로 이루어져 있습니다:
 
-1.  **Chrome Extension (`watch-party-extension/`)**: Extracts playback information from the streaming service's web player.
-    *   [Detailed README for the Extension](./watch-party-extension/README.md)
-2.  **Node.js Server (`obs-timer-server/`)**: Receives data from the extension and serves a customizable HTML overlay for OBS to display the timer and video details.
-    *   [Detailed README for the Server](./obs-timer-server/README.md)
+1.  **크롬 확장 프로그램 (`watch-party-extension/`)**: 스트리밍 서비스의 웹 플레이어에서 재생 정보를 추출합니다.
+    *   [확장 프로그램 상세 README (영문)](./watch-party-extension/README.md)
+2.  **Node.js 서버 (`obs-timer-server/`)**: 확장 프로그램으로부터 데이터를 수신하고, OBS에 타이머 및 비디오 상세 정보를 표시하기 위한 사용자 설정 가능한 HTML 오버레이를 제공합니다.
+    *   [서버 상세 README (영문)](./obs-timer-server/README.md)
 
-## Core Features
+## 주요 기능 (버전 1.0)
 
-*   Real-time display of video title, subtitle, current playback time, and total duration in OBS.
-*   Seamless communication via WebSockets between the browser extension and a local Node.js server.
-*   Configurable display options for the OBS overlay (e.g., colors, font sizes) via a web interface provided by the server.
-*   Designed for easy setup for both single-PC and dual-PC streaming configurations.
-*   Initial support for Laftel, with a flexible design to support more platforms in the future.
+*   단일 사용자 환경을 기준으로, OBS에서 비디오 제목, 부제목(시리즈/에피소드), 현재 재생 시간, 총 재생 시간 실시간 표시.
+*   브라우저 확장 프로그램과 로컬 Node.js 서버 간 웹소켓을 통한 원활한 통신.
+*   서버에서 제공하는 웹 인터페이스를 통해 OBS 오버레이 표시 옵션(예: 색상, 글꼴 크기) 설정 가능.
+*   원컴 스트리밍 환경에 최적화되어 있으며, 투컴 스트리밍 환경의 경우 (예: 한 PC에서 로컬 서버 실행 시) 수동으로 서버 IP 주소 설정이 필요할 수 있습니다.
+*   초기 Laftel 지원, 향후 더 많은 플랫폼을 지원하는 것을 목표로 유연하게 설계.
 
-## Tech Stack
+## 아키텍처
 
-*   **Chrome Extension**: JavaScript, HTML, CSS, Chrome Extension API, WebSockets
-*   **Node.js Server**: Node.js, Express.js (or native http module), WebSocket (e.g., `ws` library)
-*   **OBS Display**: HTML, CSS, JavaScript (client-side WebSocket)
+### 원컴 환경 (One-Computer Setup)
 
-## Screenshots
+```mermaid
+graph LR<br>
+    subgraph "PC 1"<br>
+        OBS --> BSource("Browser Source (obs-display.html)");<br>
+        ChromeExt("Chrome Extension (Timer Data Source)") --> Server("Local Timer Server (server-main.js)");<br>
+        Server --> BSource;<br>
+        BSource -- WebSocket --> Server;<br>
+    end<br>
+    ChromeExt -.-> |Reads data from| StreamingPlatform("Streaming Platform (e.g., YouTube, Netflix)");<br>
+```
 
-Here's a glimpse of the extension and the OBS overlay:
+### 투컴 환경 (Two-Computer Setup)
 
-**Chrome Extension in Action:**
+```mermaid
+graph LR<br>
+    subgraph "PC 1 (게이밍/스트리밍 PC)"<br>
+        OBS --> BSource("Browser Source (obs-display.html)");<br>
+    end<br>
+<br>
+    subgraph "PC 2 (보조/서버 PC)"<br>
+        ChromeExt("Chrome Extension (Timer Data Source)") --> TimerServer("Timer Server (server-main.js on Railway/other)");<br>
+    end<br>
+<br>
+    StreamingPlatform("Streaming Platform (e.g., YouTube, Netflix)");<br>
+    ChromeExt -.-> |Reads data from| StreamingPlatform;<br>
+    TimerServer -- WebSocket --> BSource;<br>
+    BSource -- WebSocket --> TimerServer;<br>
+    <br>
+    style TimerServer fill:#f9f,stroke:#333,stroke-width:2px<br>
+```
 
-![Chrome Extension UI showing video detection and server connection status](./imgs/extension.png)
+## 기술 스택
 
-**OBS Overlay Display:**
+*   **크롬 확장 프로그램**: JavaScript, HTML, CSS, Chrome Extension API, WebSockets
+*   **Node.js 서버**: Node.js, Express.js (또는 네이티브 http 모듈), WebSocket (예: `ws` 라이브러리)
+*   **OBS 표시 화면**: HTML, CSS, JavaScript (클라이언트 측 WebSocket)
 
-![OBS overlay showing video title, series, progress bar, and time](./imgs/obs.png)
+## 스크린샷
 
-## Installation & Usage
+확장 프로그램 및 OBS 오버레이 작동 모습 예시입니다:
 
-There are two main ways to use this project:
+**크롬 확장 프로그램 작동 모습:**
 
-### 1. For End-Users (Recommended for most)
+![크롬 확장 프로그램 UI - 비디오 감지 및 서버 연결 상태 표시](./imgs/extension.png)
 
-If you just want to use the timer for your watch parties or streams without dealing with code:
+**OBS 오버레이 화면:**
 
-*   **Server Application**:
-    *   Download the pre-built server executable (`obs-timer-server.exe` for Windows, other OS versions may be provided in releases).
-    *   Run the executable. No Node.js installation is required.
-    *   Detailed instructions can be found in the [Server README's "Packaging (Executable)" section](./obs-timer-server/README.md#packaging-executable) (once releases are available).
-*   **Chrome Extension**:
-    *   Install the Chrome Extension. This might be available via a `.crx` file or by loading the unpacked extension from the `watch-party-extension` directory.
-    *   Follow the [Extension README's "Setup and Usage" section](./watch-party-extension/README.md#setup-and-usage).
-*   **OBS Configuration**: Add the server's display page (e.g., `http://localhost:3000` if the server is running on the same PC) as a Browser Source in OBS Studio.
+![OBS 오버레이 - 비디오 제목, 시리즈, 진행 바, 시간 표시](./imgs/obs.png)
 
-*(Note: Pre-built executables and extension packages will be made available under the "Releases" section of this repository once finalized.)*
+## 설치 및 사용법 (v1.0)
 
-### 2. For Developers (or if you want to run from source)
+### 1. 일반 사용자
 
-If you want to modify the code, contribute, or run the server directly using Node.js:
+워치 파티나 스트리밍에 타이머를 사용하고 싶다면:
 
-*   **Prerequisites**:
-    *   Node.js (version specified in `obs-timer-server/README.md`)
-    *   Git (for cloning the repository)
-*   **Setup**:
-    1.  Clone this repository: `git clone https://github.com/june-oh/obs-watch-party.git`
-    2.  Navigate to the `obs-timer-server` directory and install dependencies: `cd obs-timer-server && npm install`
-    3.  Follow the server setup instructions in the [Server README](./obs-timer-server/README.md#setup-and-usage).
-    4.  For the extension, load it as an unpacked extension from the `watch-party-extension` directory as described in the [Extension README](./watch-party-extension/README.md#setup-and-usage).
-*   **Running**:
-    *   Start the Node.js server: `cd obs-timer-server && node src/server-main.js` (or as specified in its README).
-    *   Ensure the Chrome extension is active in your browser.
-*   **Building (Optional)**: If you make changes to the server and want to create an executable, follow the build instructions in the [Server README](./obs-timer-server/README.md#packaging-executable).
+*   **서버 애플리케이션 (v1.0 - 소스 코드로 실행)**:
+    *   현재 v1.0에서는 소스 코드를 직접 실행하는 방식이 주된 사용법입니다. 이를 위해서는 Node.js 설치가 필요합니다.
+    *   아래 "2. 개발자 (또는 소스 코드에서 직접 실행하고 싶은 경우)" 섹션의 안내에 따라 서버를 설정하고 실행해주세요.
+    *   (더 간편한 설치를 위한 사전 빌드된 실행 파일은 향후 릴리즈에 포함될 예정입니다.)
+*   **크롬 확장 프로그램**:
+    *   크롬 확장 프로그램을 설치합니다. `.crx` 파일 형태로 제공되거나, `watch-party-extension` 디렉토리에서 압축 해제된 확장 프로그램을 로드하여 사용할 수 있습니다. (릴리즈 섹션 확인)
+    *   [확장 프로그램 README의 "설치 및 사용법" 섹션 (영문)](./watch-party-extension/README.md#setup-and-usage)을 따릅니다.
+*   **OBS 설정**: 서버 표시 페이지(예: 서버와 동일한 PC에서 실행 중인 경우 `http://localhost:3000`)를 OBS Studio의 브라우저 소스로 추가합니다.
 
-## Future Plans
+### 2. 개발자 (또는 소스 코드에서 직접 실행하고 싶은 경우)
 
-*   Support for additional streaming platforms (e.g., Netflix, YouTube, Disney+).
-*   Enhanced customization options for the OBS overlay.
-*   Potentially a more user-friendly settings management for the extension (e.g., via an options page).
-*   Localization for other languages.
+코드를 수정하거나, 기여하거나, Node.js를 사용하여 서버를 직접 실행하고 싶다면:
 
-## Contributing
+*   **사전 준비물**:
+    *   Node.js (LTS 버전 권장, 예: v18 이상. 필요한 경우 `obs-timer-server/package.json`의 engine 요구사항 확인)
+    *   Git (저장소 복제용)
+*   **설정**:
+    1.  이 저장소를 복제합니다: `git clone https://github.com/june-oh/obs-watch-party.git`
+    2.  `obs-timer-server` 디렉토리로 이동하여 의존성을 설치합니다: `cd obs-timer-server && npm install` (또는 Yarn 사용 시 `yarn install`)
+    3.  [서버 README (영문)](./obs-timer-server/README.md#setup-and-usage)의 서버 설정 안내를 따릅니다.
+    4.  확장 프로그램의 경우, [확장 프로그램 README (영문)](./watch-party-extension/README.md#setup-and-usage)에 설명된 대로 `watch-party-extension` 디렉토리에서 압축 해제된 확장 프로그램으로 로드합니다.
+*   **실행**:
+    *   Node.js 서버를 시작합니다: `cd obs-timer-server && node src/server-main.js` (또는 해당 README에 명시된 대로).
+    *   브라우저에서 크롬 확장 프로그램이 활성화되어 있는지 확인합니다.
+*   **빌드 (선택 사항)**: 서버 코드를 변경하고 실행 파일을 만들고 싶다면, [서버 README (영문)](./obs-timer-server/README.md#packaging-executable)의 빌드 안내를 따릅니다.
 
-Contributions are welcome! For more details on how to contribute, including our branching strategy, commit conventions, and versioning, please see our [Contributing Guidelines](./CONTRIBUTING.md).
+## 향후 계획
 
-If you have ideas for new features, improvements, or bug fixes, please feel free to:
+*   추가 스트리밍 플랫폼 지원 (예: Netflix, YouTube, Disney+).
+*   OBS 오버레이를 위한 향상된 사용자 정의 옵션.
+*   클라우드 호스팅 서버를 이용한 다중 사용자 환경 지원 (사용자/스트리머별 개별 타이머).
+*   더 쉽고 안정적인 투컴/다중 사용자 설정을 위한 클라우드 기반 서버 호스팅(예: Railway, Render) 옵션 제공.
+*   확장 프로그램을 위한 더 사용자 친화적인 설정 관리 (예: 옵션 페이지를 통해).
+*   다른 언어 지원 (현지화).
 
-1.  Open an issue to discuss your ideas.
-2.  Fork the repository and submit a pull request with your changes.
+## 기여하기
 
-Please try to follow the existing coding style and ensure your changes are well-tested.
+기여를 환영합니다! 자세한 기여 방법(브랜칭 전략, 커밋 규약, 버전 관리 포함)은 [기여 가이드라인 (영문)](./CONTRIBUTING.md)을 참고해주세요.
 
-## License
+새로운 기능, 개선 사항 또는 버그 수정에 대한 아이디어가 있다면 언제든지 다음을 수행해 주세요:
 
-This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details. 
+1.  아이디어를 논의하기 위해 이슈를 개설합니다.
+2.  저장소를 포크하고 변경 사항에 대한 풀 리퀘스트를 제출합니다.
+
+기존 코딩 스타일을 따르고 변경 사항이 잘 테스트되었는지 확인해 주시기 바랍니다.
+
+## 라이선스
+
+이 프로젝트는 MIT 라이선스를 따릅니다 - 자세한 내용은 [LICENSE](./LICENSE) 파일을 참고하세요. 
