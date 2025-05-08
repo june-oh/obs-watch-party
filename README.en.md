@@ -31,37 +31,37 @@ It consists of two main components:
 
 ## Architecture
 
-### One-Computer Setup
+### Single-Computer Setup
 
 ```mermaid
-graph LR<br>
-    subgraph "PC 1"<br>
-        OBS --> BSource("Browser Source (obs-display.html)");<br>
-        ChromeExt("Chrome Extension (Timer Data Source)") --> Server("Local Timer Server (server-main.js)");<br>
-        Server --> BSource;<br>
-        BSource -- WebSocket --> Server;<br>
-    end<br>
-    ChromeExt -.-> |Reads data from| StreamingPlatform("Streaming Platform (e.g., YouTube, Netflix)");<br>
+graph LR;
+  subgraph "PC 1";
+    OBS --> BSource("Browser Source (obs-display.html)");  
+    ChromeExt("Chrome Extension (Timer Data Source)") --> Server("Local Timer Server (server-main.js)");  
+    Server --> BSource;  
+    BSource -- WebSocket --> Server;  
+  end;
+  ChromeExt -.->|Reads data from| StreamingPlatform("Streaming Platform (e.g., YouTube, Netflix)");  
 ```
 
-### Two-Computer Setup
+### Dual-Computer Setup
 
 ```mermaid
-graph LR<br>
-    subgraph "PC 1 (Gaming/Streaming PC)"<br>
-        OBS --> BSource("Browser Source (obs-display.html)");<br>
-    end<br>
-<br>
-    subgraph "PC 2 (Auxiliary/Server PC)"<br>
-        ChromeExt("Chrome Extension (Timer Data Source)") --> TimerServer("Timer Server (server-main.js on Railway/other)");<br>
-    end<br>
-<br>
-    StreamingPlatform("Streaming Platform (e.g., YouTube, Netflix)");<br>
-    ChromeExt -.-> |Reads data from| StreamingPlatform;<br>
-    TimerServer -- WebSocket --> BSource;<br>
-    BSource -- WebSocket --> TimerServer;<br>
-    <br>
-    style TimerServer fill:#f9f,stroke:#333,stroke-width:2px<br>
+graph LR;
+  subgraph "PC 1 (게이밍/스트리밍 PC)";
+    OBS --> BSource("Browser Source (obs-display.html)");  
+  end;
+
+  subgraph "PC 2 (보조/서버 PC)";
+    ChromeExt("Chrome Extension (Timer Data Source)") --> TimerServer("Timer Server (server-main.js on Railway/other)");  
+  end;
+
+  StreamingPlatform("Streaming Platform (e.g., YouTube, Netflix)");  
+  ChromeExt -.->|Reads data from| StreamingPlatform;  
+  TimerServer -- WebSocket --> BSource;  
+  BSource -- WebSocket --> TimerServer;  
+
+  style TimerServer fill:#f9f,stroke:#333,stroke-width:2px;  
 ```
 
 ## Tech Stack
