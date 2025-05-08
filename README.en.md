@@ -48,11 +48,11 @@ graph LR;
 
 ```mermaid
 graph LR;
-  subgraph "PC 1 (게이밍/스트리밍 PC)";
+  subgraph "PC 1 (Gaming/Streaming PC)";
     OBS --> BSource("Browser Source (obs-display.html)");  
   end;
 
-  subgraph "PC 2 (보조/서버 PC)";
+  subgraph "PC 2 (Auxiliary/Server/OBS PC)";
     ChromeExt("Chrome Extension (Timer Data Source)") --> TimerServer("Timer Server (server-main.js on Railway/other)");  
   end;
 
